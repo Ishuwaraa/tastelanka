@@ -8,7 +8,14 @@ export default {
     // "./src/components/**/**.jsx"
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: '#CE3030',
+      },
+      fontFamily: {
+        'montserrat': ['Montserrat', 'sand-serif'],
+      }
+    },
   },
   plugins: [],
 }

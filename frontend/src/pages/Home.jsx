@@ -3,11 +3,13 @@ import Navbar from "../components/shared/Navbar";
 
 const Home = () => {
     return ( 
-        <div>
+        <>
             <Navbar />
-            sup
+            <div className="page">
+                sup
+            </div>
             <Footer />
-        </div>
+        </>
      );
 }
  
