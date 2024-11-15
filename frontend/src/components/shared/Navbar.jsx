@@ -13,6 +13,11 @@ const Navbar = () => {
         setMenuVisible(!menuVisible);
     }  
 
+    const onSearch = (e) => {
+        e.preventDefault();
+        window.location.href = '/search'
+    }
+
     return ( 
         <nav className=' flex items-center justify-between border border-b-1 border-b-gray-200 h-14 fixed top-0 bg-white w-full z-50'>
             <div className=' mx-10'>
@@ -24,7 +29,7 @@ const Navbar = () => {
                     <div className='flex shadow-md w-64 rounded-lg'>
                         <input type="text" className=' w-full text-xs p-1 rounded-lg focus:border-transparent' placeholder='search by location or a restaurant...'/>
                         <div className="p-1 text-white bg-primary hover:cursor-pointer rounded-tr-lg rounded-br-lg">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className='size-6'>
+                            <svg onClick={(e) => onSearch(e)} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className='size-6'>
                                 <path fillRule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clipRule="evenodd" />
                             </svg>
                         </div>

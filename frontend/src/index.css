@@ -6,6 +6,10 @@
     @apply text-white font-semibold px-3 py-1 rounded-lg text-center bg-primary
 }
 
+.btn2 {
+    @apply bg-primary w-fit font-semibold px-3 py-2 flex text-white gap-2 rounded-lg
+}
+
 .page {
     @apply mx-8 md:mx-10 mt-20 mb-8 font-montserrat
 }
@@ -16,4 +20,8 @@
 
 .input {
     @apply border border-gray-500 rounded-lg w-full h-8 p-2
+}
+
+.section {
+    @apply mt-24 md:mt-32
 }
