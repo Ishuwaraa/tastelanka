@@ -1,6 +1,7 @@
 import FullRating from '../assets/full-rating.png'
 import HalfRating from '../assets/half-rating.png'
 import EmptyRating from '../assets/empty-rating.png'
+import Rating from './shared/Rating';
 
 const RestaurantCard = ({ restaurant, reviewsCount, rating, categories, review, image }) => {
     return ( 
@@ -13,14 +14,7 @@ const RestaurantCard = ({ restaurant, reviewsCount, rating, categories, review, 
                 <p className='font-medium text-lg line-clamp-1 mb-2'>{restaurant}</p>
                 <div className='flex justify-between w-1/2 mb-2'>
                     <div className=" flex items-center gap-1">
-                        {[...Array(rating)].map((_, index) => (
-                            <img src={FullRating} alt='star' key={index}/>
-                        ))}
-                        {(5 - rating !== 0) && 
-                            [...Array(5 - rating)].map((_, index) => (
-                                <img src={EmptyRating} alt='star' key={index}/>
-                            ))
-                        }                    
+                        <Rating rating={rating} />                 
                         {/* <img src={HalfRating} alt='1star' /> */}
                     </div>
                     <div className=" text-sm font-medium">{reviewsCount} reviews</div>

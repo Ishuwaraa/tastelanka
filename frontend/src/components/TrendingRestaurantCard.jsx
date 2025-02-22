@@ -1,7 +1,5 @@
-import RestaurantImg from '../assets/restaurant2.png'
-import FullRating from '../assets/full-rating.png'
-import HalfRating from '../assets/half-rating.png'
-import EmptyRating from '../assets/empty-rating.png'
+import RestaurantImg from '../assets/restaurant2.png';
+import Rating from './shared/Rating'
 
 const TrendingRestaurantCard = ({ restaurant, location, reviews, rating }) => {
     return ( 
@@ -13,14 +11,7 @@ const TrendingRestaurantCard = ({ restaurant, location, reviews, rating }) => {
             </div>
             <div className=" grid grid-cols-2 m-4">
                 <div className=" flex items-center gap-1">
-                    {[...Array(rating)].map((_, index) => (
-                        <img src={FullRating} alt='1star' key={index}/>
-                    ))}
-                    {(5 - rating !== 0) && 
-                        [...Array(5 - rating)].map((_, index) => (
-                            <img src={EmptyRating} alt='1star' key={index}/>
-                        ))
-                    }                    
+                    <Rating rating={rating} />                   
                     {/* <img src={HalfRating} alt='1star' /> */}
                 </div>
                 <div className=" text-sm font-medium">{reviews} reviews</div>

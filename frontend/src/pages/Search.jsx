@@ -37,7 +37,7 @@ const Search = () => {
                         </div>
                     </div>
 
-                    <div className="mt-5">
+                    {/* <div className="mt-5">
                         <div className=" flex justify-between pr-10">
                             <p className="font-medium">Distance</p>
                             <button className="text-sm">clear</button>
@@ -61,7 +61,7 @@ const Search = () => {
                         <div className="flex justify-center">
                             <div className="w-3/4 border border-zinc-200 mt-5"></div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
 
                 <div className="col-span-2 md:col-span-3 mt-5">
@@ -78,15 +78,16 @@ const Search = () => {
 
                     <div className="mt-10">
                         {Array(4).fill(0).map((_, index) => (
-                            <RestaurantCard
-                                key={index}
-                                restaurant='King of the Mambo'
-                                rating={Math.floor(Math.random() * 6)}
-                                reviewsCount={420}
-                                categories={['Sea Food', 'Wine Bars', 'Indian']}
-                                image={RestaurantImg}
-                                review='Lorem ipsum dolor sit amet consectetur adipisicing elit. A itaque incidunt nulla dolor dignissimos provident debitis mollitia eius cumque consectetur!'
-                            />
+                            <a href={`/restaurant?id=${index}`} key={index}>
+                                <RestaurantCard
+                                    restaurant='King of the Mambo'
+                                    rating={Math.floor(Math.random() * 6)}
+                                    reviewsCount={420}
+                                    categories={['Sea Food', 'Wine Bars', 'Indian']}
+                                    image={RestaurantImg}
+                                    review='Lorem ipsum dolor sit amet consectetur adipisicing elit. A itaque incidunt nulla dolor dignissimos provident debitis mollitia eius cumque consectetur!'
+                                />
+                            </a>
                         ))}
                     </div>
                 </div>

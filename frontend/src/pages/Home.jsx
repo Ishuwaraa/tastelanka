@@ -4,6 +4,9 @@ import TrendingRestaurantCard from "../components/TrendingRestaurantCard";
 import MapImg from '../assets/map.png';
 import ArrowRight from '../assets/arrow-right.png';
 import CategoryCard from "../components/CategoryCard";
+import HeroImage from '../assets/hero.png';
+import RecommendationInput from "../components/RecommendationInput";
+
 
 const categories = ['Sri Lankan Authentic', 'Vegetarian', 'HALAL Certified', 'Fast Food', 'Chinese', 'Indian']
 
@@ -12,7 +15,7 @@ const Home = () => {
         <>
             <Navbar />
             <div className="page">
-
+                {/* <img src={HeroImage} alt="hero" /> */}
                 <div className="section">
                     <div className="mb-8 flex justify-center">
                         <p className=" text-2xl md:text-3xl font-semibold">Trending Restaurants</p>
@@ -21,16 +24,25 @@ const Home = () => {
                         <div className="flex justify-center">
                             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
                                 {Array(3).fill(0).map((_, index) => (
-                                    <TrendingRestaurantCard key={index}
-                                        restaurant='King of the Manmbo'
-                                        location='Colombo 3'
-                                        reviews={420}
-                                        rating={Math.floor(Math.random() * 6)}
-                                    />
+                                    <a href={`/restaurant?id=${index}`} key={index}>
+                                        <TrendingRestaurantCard
+                                            restaurant='King of the Manmbo'
+                                            location='Colombo 3'
+                                            reviews={420}
+                                            rating={Math.floor(Math.random() * 6)}
+                                        />                                    
+                                    </a>
                                 ))}
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div className="section">
+                    <div className="mb-8 flex justify-center">
+                        <p className=" text-2xl md:text-3xl font-semibold">Describe your meal, and we'll find the perfect spot!</p>
+                    </div>
+                    <RecommendationInput />
                 </div>
 
                 <div className="section grid grid-cols-1 md:grid-cols-3 justify-between">
