@@ -1,3 +1,4 @@
+import React from 'react';
 import Footer from "../components/shared/Footer";
 import Navbar from "../components/shared/Navbar";
 import RestaurantThumbnail from '../assets/restaurant.png';
@@ -13,16 +14,30 @@ import PlusIcon from '../assets/plus.png';
 import ReviewCard from "../components/ReviewCard";
 import MapImg from '../assets/map.png';
 import { useState } from "react";
+import PreviewImagesModal from '../components/PreviewImagesModal';
+import Restaurant1 from '../assets/restaurant1.png';
+import FoodPic from '../assets/food1.png';
 
 const Restaurant = () => {
     const [images , setImages] = useState(Array(4).fill(null)); //initializing array with 4 null elements
+    const [openAllPhotos, setOpenAllPhotos] = useState(false);
+    const [openMenu, setOpenMenu] = useState(false);
+    const [openReviewImages, setOpenReviewImages] = useState(false);
+
+    const handleOpenAllPics = () => setOpenAllPhotos(true);
+    const handleCloseAllPics = () => setOpenAllPhotos(false); 
+    const handleOpenMenu = () => setOpenMenu(true);
+    const handleCloseMenu = () => setOpenMenu(false);
+    const allPhotos = [Restaurant1, RestaurantThumbnail];
+    const menuPhotos = [RestaurantThumbnail];
+    const reviewPhotos = [FoodPic, RestaurantThumbnail];
 
     return ( 
         <>
         <Navbar />
         <div className="page">
             <div className="mx-auto">
-                {/* Hero Section with Background Image */}
+                {/* Hero Section */}
                 <div className="relative h-72">
                     <img src={RestaurantThumbnail} alt="Restaurant" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/50"></div>
@@ -47,14 +62,25 @@ const Restaurant = () => {
                         
                         {/* Photos Link */}
                         <div className="absolute bottom-6 right-6">
-                            <button className="text-white text-sm">See all 55 photos</button>
+                            <button className="text-white text-sm border p-2 rounded-md" onClick={handleOpenAllPics}>See all 55 photos</button>
                         </div>
+                        <PreviewImagesModal 
+                            open={openAllPhotos}
+                            handleClose={handleCloseAllPics}
+                            images={allPhotos}                            
+                        />
                     </div>
                 </div>
 
                 {/* Action Buttons */}
                 <div className="flex gap-4 p-4 border-b">
-                    <button className="bg-primary text-white px-6 py-2 rounded-md">View Menu</button>
+                    <button className="bg-primary text-white px-6 py-2 rounded-md" onClick={handleOpenMenu}>View Menu</button>
+                    <PreviewImagesModal
+                        open={openMenu}
+                        handleClose={handleCloseMenu}
+                        images={menuPhotos}
+                    />
+
                     <button className="border px-6 py-2 rounded-md flex items-center gap-2">
                         <img src={ShareIcon} alt="share" className="w-5"/> Share
                     </button>
@@ -65,118 +91,129 @@ const Restaurant = () => {
 
                 {/* Main Content Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-4 mt-12">
-                    {/* Promotions Section */}
-                    <div className="md:col-span-2">
-                        <h2 className="text-xl font-semibold mb-4">Available Promotions</h2>
-                        
-                        {/* Promotion Cards */}
-                        <div className="space-y-4 md:w-3/4">
-                            <div className="relative h-32 rounded-lg overflow-hidden">
-                                <img src={Promotion1} alt="20% OFF" className="w-full h-full object-cover" />
-                                <div className="absolute inset-0 bg-black/40 p-4 flex flex-col justify-center">
-                                    <h3 className="text-white text-2xl font-bold">20% OFF</h3>
-                                    <p className="text-white text-sm">for all combank credit users</p>
-                                </div>
-                            </div>
+                    {/* Left Column */}
+                    <div className="md:col-span-2 overflow-y-auto">
+
+                        {/* Promotions Section */}
+                        <div>
+                            <h2 className="text-xl font-semibold mb-4">Available Promotions</h2>
                             
-                            <div className="relative h-32 rounded-lg overflow-hidden">
-                                <img src={Promotion2} alt="BUY 1 GET 1 FREE" className="w-full h-full object-cover" />
-                                <div className="absolute inset-0 bg-black/40 p-4 flex flex-col justify-center">
-                                    <h3 className="text-white text-2xl font-bold">BUY 1 GET 1 FREE</h3>
-                                    <p className="text-white text-sm">for all combank credit users</p>
+                            {/* Promotion Cards */}
+                            <div className="space-y-4 md:w-3/4">
+                                <div className="relative h-32 rounded-lg overflow-hidden">
+                                    <img src={Promotion1} alt="20% OFF" className="w-full h-full object-cover" />
+                                    <div className="absolute inset-0 bg-black/40 p-4 flex flex-col justify-center">
+                                        <h3 className="text-white text-2xl font-bold">20% OFF</h3>
+                                        <p className="text-white text-sm">for all combank credit users</p>
+                                    </div>
+                                </div>
+                                
+                                <div className="relative h-32 rounded-lg overflow-hidden">
+                                    <img src={Promotion2} alt="BUY 1 GET 1 FREE" className="w-full h-full object-cover" />
+                                    <div className="absolute inset-0 bg-black/40 p-4 flex flex-col justify-center">
+                                        <h3 className="text-white text-2xl font-bold">BUY 1 GET 1 FREE</h3>
+                                        <p className="text-white text-sm">for all combank credit users</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        {/* Reviews */}
+                        <div className="space-y-8 mt-10 w-3/4">
+                            {Array(3).fill(0).map((_, index) => (
+                                <ReviewCard
+                                    username='ishuwara'
+                                    date='2024/02/20'
+                                    rating={2}
+                                    review='Lorem ipsum dolor sit amet consectetur. Interdum congue sit phasellus faucibus nisi eu. Lectus vitae aliquam vitae id sed sed tellus est.'
+                                    helpful={5}
+                                    likes={2}
+                                    dislikes={1}
+                                    images={reviewPhotos}
+                                    key={index}
+                                />                                
+                            ))}
+                        </div>
                     </div>
 
-                    {/* Contact Information */}
-                    <div className="flex flex-col gap-y-10 border rounded-lg p-6">
-                        <a href="tel:(415) 702-6096" className="flex items-center justify-between gap-4">
-                            <span>(415) 702-6096</span>
-                            <img src={Phone} alt="phone" className=" w-5"/>
-                        </a>
-                    
-                        <a href="/" className="flex items-center justify-between gap-4 ">
-                            <span className="text-blue-600">kingmambo.com</span>
-                            <img src={Globe} alt="website" className="w-5"/>
-                        </a>
-                    
-                        <a href="#directions" className="flex items-center justify-between gap-4 ">
-                            <div>
-                                <p>Get Directions</p>
-                                <p className="text-sm text-gray-600">1722 Taraval St Colombo 07, Sri Lanka</p>
+                    {/* Right Column */}
+                    <div className="md:col-span-1 h-fit sticky top-20">
+                        {/* Contact Information */}
+                        <div className="flex flex-col gap-y-10 border rounded-lg p-6">
+                            <a href="tel:(415) 702-6096" className="flex items-center justify-between gap-4">
+                                <span>(415) 702-6096</span>
+                                <img src={Phone} alt="phone" className=" w-5"/>
+                            </a>
+                        
+                            <a href="/" className="flex items-center justify-between gap-4 ">
+                                <span className="text-blue-600">kingmambo.com</span>
+                                <img src={Globe} alt="website" className="w-5"/>
+                            </a>
+                        
+                            <a href="#directions" className="flex items-center justify-between gap-4 ">
+                                <div>
+                                    <p>Get Directions</p>
+                                    <p className="text-sm text-gray-600">1722 Taraval St Colombo 07, Sri Lanka</p>
+                                </div>
+                                <img src={Compass} alt="location" className="w-5"/>
+                            </a>
+                        
+                            <div className="flex justify-center">
+                                <button className=" bg-primary text-white p-3 rounded-lg w-full">
+                                    Chat with us
+                                </button>                        
                             </div>
-                            <img src={Compass} alt="location" className="w-5"/>
-                        </a>
+                        </div>
                     
-                        <div className="flex justify-center">
-                            <button className=" bg-primary text-white p-3 rounded-lg w-full">
-                                Chat with us
-                            </button>                        
-                        </div>
-                    </div>
+                        {/* Add Review Form */}
+                        <div className="mt-10 border rounded-lg p-6">
+                            <div className="flex gap-1 mb-4">
+                                <Rating rating={2} />
+                            </div>
 
-                    {/* Reviews */}
-                    <div className="space-y-8 md:col-span-2 mt-10 w-3/4">
-                        <ReviewCard
-                            username='ishuwara'
-                            date='2024/02/20'
-                            rating={2}
-                            review='Lorem ipsum dolor sit amet consectetur. Interdum congue sit phasellus faucibus nisi eu. Lectus vitae aliquam vitae id sed sed tellus est.'
-                            helpful={5}
-                            likes={2}
-                            dislikes={1}
-                        />
-                    </div>
+                            <textarea placeholder="Your review here" className="w-full h-32 p-3 border rounded-lg mb-4 resize-none"/>
 
-                    {/* Add Review Form */}
-                    <div className="mt-10 border rounded-lg p-6">
-                        <div className="flex gap-1 mb-4">
-                            <Rating rating={2} />
-                        </div>
-
-                        <textarea placeholder="Your review here" className="w-full h-32 p-3 border rounded-lg mb-4 resize-none"/>
-
-                        <div className="mb-4">
-                            <p className="mb-2">Add your images</p>
-                            <div className="flex gap-4">
-                                {images.map((image, index) => (
-                                    <div key={index} className="relative w-16 h-16 border rounded-lg bg-gray-200 bg-opacity-30">
-                                        {image && <img src={image} alt="" className="w-full h-full rounded-xl object-fill" />}
-                                        <div className=" absolute inset-0 flex items-center justify-center">
-                                            {!image && (
-                                                <>
-                                                <input
-                                                    type="file"
-                                                    accept=".png, .jpg, .jpeg"
-                                                    name={`photo${index + 1}`}
-                                                    // ref={el => fileInputRefs.current[index] = el}
-                                                    // onChange={(e) => handleChange(e, index)}
-                                                    className="hidden"
-                                                />
-                                                <img src={PlusIcon} alt="add image" 
-                                                    // onClick={() => handleIconClick(index)} 
-                                                    className=" text-primary hover:cursor-pointer"/>
-                                                </>
-                                            )}
+                            <div className="mb-4">
+                                <p className="mb-2">Add your images</p>
+                                <div className="flex gap-4">
+                                    {images.map((image, index) => (
+                                        <div key={index} className="relative w-16 h-16 border rounded-lg bg-gray-200 bg-opacity-30">
+                                            {image && <img src={image} alt="" className="w-full h-full rounded-xl object-fill" />}
+                                            <div className=" absolute inset-0 flex items-center justify-center">
+                                                {!image && (
+                                                    <>
+                                                    <input
+                                                        type="file"
+                                                        accept=".png, .jpg, .jpeg"
+                                                        name={`photo${index + 1}`}
+                                                        // ref={el => fileInputRefs.current[index] = el}
+                                                        // onChange={(e) => handleChange(e, index)}
+                                                        className="hidden"
+                                                    />
+                                                    <img src={PlusIcon} alt="add image" 
+                                                        // onClick={() => handleIconClick(index)} 
+                                                        className=" text-primary hover:cursor-pointer"/>
+                                                    </>
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                ))} 
+                                    ))} 
+                                </div>
                             </div>
+
+                            <button className="w-full bg-primary text-white py-3 rounded-lg">
+                                Add your review
+                            </button>
                         </div>
 
-                        <button className="w-full bg-primary text-white py-3 rounded-lg">
-                            Add your review
-                        </button>
-                    </div>
+                        {/* <div className=" hidden md:block md:col-span-2"></div> */}
 
-                    <div className=" hidden md:block md:col-span-2"></div>
-
-                    {/* Location div */}
-                    <div className="mt-10 border rounded-lg p-6">
-                        <h2 className="text-xl font-semibold mb-4">Location</h2>
-                        <div className="w-full overflow-hidden">
-                            <img src={MapImg} alt="location" />
+                        {/* Location div */}
+                        <div className="mt-10 border rounded-lg p-6">
+                            <h2 className="text-xl font-semibold mb-4">Location</h2>
+                            <div className="w-full overflow-hidden">
+                                <img src={MapImg} alt="location" />
+                            </div>
                         </div>
                     </div>
                 </div>

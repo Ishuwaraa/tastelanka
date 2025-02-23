@@ -1,11 +1,17 @@
-import FoodPic from '../assets/food1.png';
 import Heart from '../assets/heart.png';
 import HelpFul from '../assets/helpful.png';
 import ThumbsDown from '../assets/thumbs-down.png';
 import ProfilePic from '../assets/profilepic.png';
 import Rating from './shared/Rating';
+import PreviewImagesModal from './PreviewImagesModal';
+import { useState } from 'react';
 
 const ReviewCard = ({ username, profilepic, date, rating, review, images, helpful, likes, dislikes}) => {
+    const [openReviewPhotos, setOpenReviewPhotos] = useState(false);    
+
+    const handleOpenReviewPics = () => setOpenReviewPhotos(true);
+    const handleCloseReviewPics = () => setOpenReviewPhotos(false); 
+
     return (         
         <div className="border-b pb-6">
             <div className="flex items-center gap-3 mb-4">
@@ -26,9 +32,16 @@ const ReviewCard = ({ username, profilepic, date, rating, review, images, helpfu
 
             {/* Review Images */}
             <div className="flex gap-2">
-                <img src={FoodPic} alt="Review" className="w-20 h-20 object-cover rounded-lg"/>
-                <img src={FoodPic} alt="Review" className="w-20 h-20 object-cover rounded-lg"/>
+                {images.map((image, index) => (
+                    <img src={image} key={index} alt="Review" className="w-20 h-20 object-cover rounded-lg" onClick={handleOpenReviewPics}/>
+                ))}
+                {/* <img src={FoodPic} alt="Review" className="w-20 h-20 object-cover rounded-lg" onClick={handleOpenReviewPics}/> */}
             </div>
+            <PreviewImagesModal 
+                open={openReviewPhotos}
+                handleClose={handleCloseReviewPics}
+                images={images}
+            />
 
             {/* Review Actions */}
             <div className="flex gap-6 mt-4">
