@@ -22,7 +22,6 @@ const Restaurant = () => {
     const [images , setImages] = useState(Array(4).fill(null)); //initializing array with 4 null elements
     const [openAllPhotos, setOpenAllPhotos] = useState(false);
     const [openMenu, setOpenMenu] = useState(false);
-    const [openReviewImages, setOpenReviewImages] = useState(false);
 
     const handleOpenAllPics = () => setOpenAllPhotos(true);
     const handleCloseAllPics = () => setOpenAllPhotos(false); 
