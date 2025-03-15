@@ -5,6 +5,7 @@ import MapImg from '../assets/map.png';
 import ArrowRight from '../assets/arrow-right.png';
 import CategoryCard from "../components/CategoryCard";
 import HeroImage from '../assets/hero.png';
+import HeroImage1 from '../assets/hero1.png';
 import RecommendationInput from "../components/RecommendationInput";
 
 
@@ -14,8 +15,21 @@ const Home = () => {
     return ( 
         <>
             <Navbar />
+                <div className="relative w-full h-[500px] mt-14"> {/* mt-14 to account for fixed navbar height */}
+                    {/* Background Image with Overlay */}
+                    <div className="absolute inset-0 bg-black/40"> {/* Dark overlay */}
+                        <img src={HeroImage1} alt="Sri Lankan dining experience" className="w-full h-full object-cover"/>                        
+                    </div>
+                    
+                    {/* Text Content */}
+                    <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-16">
+                        <h1 className="text-3xl md:text-5xl font-bold text-white mb-2">Taste the Essence of Sri Lanka</h1>
+                        <p className="text-xl md:text-2xl text-white">- Find, Review, and Savor Local Eats</p>
+                    </div>
+                </div>
             <div className="page">
                 {/* <img src={HeroImage} alt="hero" /> */}
+
                 <div className="section">
                     <div className="mb-8 flex justify-center">
                         <p className=" text-2xl md:text-3xl font-semibold">Trending Restaurants</p>

@@ -34,7 +34,9 @@ const Navbar = () => {
                     </div>
                 </div>                
                 <a href="/" >Own a Restaurant?</a>
-                <a href="/" >About Us</a>
+                <a href="/profile" >Profile</a>
+                <a href="/profile/restaurant" >My Restaurant</a>
+                <a href="/profile/inbox" >Messages</a>            
             </div>
 
             <div className=' mx-10 block lg:hidden' onClick={toggleBurgerIcon}>
@@ -62,7 +64,9 @@ const Navbar = () => {
                 <div className={`absolute top-14 left-0 w-full font-montserrat font-semibold bg-white border border-b-gray-200  pb-4 lg:hidden transition-all duration-500 ease-in-out transform ${menuVisible ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
                     <ul className='flex flex-col items-center space-y-4 py-4'>
                     <li><a href="/" className='block w-full text-center'>Own a Restaurant?</a></li>
-                    <li><a href="/" className='block w-full text-center'>About Us</a></li>
+                    <li><a href="/profile" className='block w-full text-center'>Profile</a></li>
+                    <li><a href="/profile/restaurant" className='block w-full text-center'>My Restaurant</a></li>                    
+                    <li><a href="/profile/inbox" className='block w-full text-center'>Messages</a></li>
                     {/* {auth?.accessToken && <li><a href="/profile" className='block w-full text-center'>Profile</a></li>} */}
                     </ul>
                     <div className=' flex justify-center'>

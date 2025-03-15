@@ -8,7 +8,7 @@ const { generateToken, genResetPassToken } = require('../middleware/authMiddlewa
 const cookieOptions = {
     httpOnly: true, 
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'none',   //change this
+    sameSite: 'none',   //TODO: change this
     maxAge: 3 * 24 * 60 * 60 * 1000    //exp in 3d
 }
 
@@ -206,7 +206,7 @@ const deleteAcc = async (req, res) => {
         const match = await bcrypt.compare(password, user.password);
         if(!match) return res.status(400).json({ msg: 'Incorrect passwrord' });
 
-        //delete images from s3, delete restaurant, delete restaurant reviews, delete user posted reviews
+        //TODO: delete images from s3, delete restaurant, delete restaurant reviews, delete user posted reviews
                 
         const deleted = await User.findByIdAndDelete(userId);
         if(!deleted) return res.status(500).json({ msg: 'Error deleting account' });
@@ -222,7 +222,8 @@ const deleteAcc = async (req, res) => {
     }
 }
 
-//forgot pass
+//forgot pass 
+//TODO: needs to change the email client in the env file
 const forgotPass = async (req, res) => {
     const { email } = req.body;
     const convEmail = email.toLowerCase();
