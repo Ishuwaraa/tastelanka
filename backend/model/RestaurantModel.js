@@ -39,8 +39,13 @@ const restaurantSchema = new Schema({
         required: true
     },
     menu: [String],
-    promotions: [{
+    images: [String],
+    promotions: [{        
         title: {
+            type: String,
+            required: true
+        },
+        description: {
             type: String,
             required: true
         },

@@ -290,4 +290,4 @@ const resetPass = async (req, res) => {
     }
 }
 
-module.exports = { register, login, logout, getUserData, updateUserData, updatePass, deleteAcc, forgotPass, resetPass };
+module.exports = { cookieOptions, register, login, logout, getUserData, updateUserData, updatePass, deleteAcc, forgotPass, resetPass };
