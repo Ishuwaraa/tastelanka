@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 
 const userRoutes = require('./route/userRoute');
 const restaurantRoutes = require('./route/restaurantRoute');
+const reviewRoutes = require('./route/reviewRoute');
 
 const app = express();
 
@@ -27,3 +28,4 @@ app.use(cookieParser());
 
 app.use('/api/user', userRoutes);
 app.use('/api/restaurant', restaurantRoutes);
+app.use('/api/review', reviewRoutes);

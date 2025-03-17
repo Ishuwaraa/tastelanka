@@ -28,6 +28,10 @@ const reviews = new Schema({
         type: Number,
         default: 0
     },
+    reply: {
+        type: String,
+        default: null
+    },
     images: [String]
 }, { timestamps: true });
 

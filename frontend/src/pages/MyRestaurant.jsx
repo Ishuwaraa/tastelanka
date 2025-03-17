@@ -40,7 +40,7 @@ const MyRestaurant = () => {
                     
                     {/* Content overlay */}
                     <div className="absolute bottom-0 left-0 p-6 text-white">
-                        <h1 className="text-4xl font-bold mb-2">King of the Mambo</h1>
+                        <h1 className="text-4xl font-bold mb-2">King of the Mambo | here let the owner reply to the reviews</h1>
                         
                         {/* Rating */}
                         <div className="flex items-center gap-2 mb-2">

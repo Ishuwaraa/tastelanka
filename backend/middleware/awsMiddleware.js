@@ -26,7 +26,8 @@ const upload = multer({
 }).fields([
     { name: 'thumbnail', maxCount: 1 },
     { name: 'menuPhotos', maxCount: 2 },
-    { name: 'restaurantPhotos', maxCount: 4 }
+    { name: 'restaurantPhotos', maxCount: 4 },
+    { name: 'reviewImages', maxCount: 4 }
 ]);
 
 const singleUpload = multer({
