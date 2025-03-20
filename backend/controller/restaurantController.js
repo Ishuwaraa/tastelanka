@@ -91,6 +91,13 @@ const getRestaurantRecommendations = async (req, res) => {
     }
 }
 
+const generateDescription = (restaurant) => {
+    //Known for ${restaurant.menu.slice(0, 3).join(", ")}.
+    //${restaurant?.promotions?.length > 0 ? "Special promotions include " + restaurant.promotions.map(p => p.title).join(", ") + "." : ""}
+    //It offers ${restaurant?.priceRange.join(", ")} 
+    return `${restaurant.name} is a ${restaurant.category.join(", ")} restaurant located in ${restaurant.location}. It offers 2000-8000 price range dishes and has a rating of ${Math.floor(Math.random() * 6)}.`;
+}
+
 //create restaurant
 const createRestaurant = async (req, res) => {
     const userId = req.userid;
@@ -102,15 +109,18 @@ const createRestaurant = async (req, res) => {
         const menuFilenames = req.files.menuPhotos ? req.files.menuPhotos.map(file => file.key) : [];            
         const imageFilenames = req.files.restaurantPhotos ? req.files.restaurantPhotos.map(file => file.key) : [];
 
-        if (role !== 'customer') {
-            const allImages = [
-                ...(thumbnailFilename ? [thumbnailFilename] : []), 
-                ...menuFilenames,
-                ...imageFilenames
-            ];
-            await deleteImages(allImages);            
-            return res.status(401).json({ msg: 'You can only add upto 1 restaurant' });
-        }               
+        //TODO: UNCOMMENT THIS
+        // if (role !== 'customer') {
+        //     const allImages = [
+        //         ...(thumbnailFilename ? [thumbnailFilename] : []), 
+        //         ...menuFilenames,
+        //         ...imageFilenames
+        //     ];
+        //     await deleteImages(allImages);            
+        //     return res.status(401).json({ msg: 'You can only add upto 1 restaurant' });
+        // }
+
+        const description = generateDescription(data);
 
         const restaurant = await Restaurant.create({
             name: data.name,
@@ -125,7 +135,8 @@ const createRestaurant = async (req, res) => {
             menu: menuFilenames,
             images: imageFilenames,
             promotions: [],
-            priceRange: []            
+            priceRange: [],
+            embedding: description           
         });
         if (!restaurant) return res.status(500).json({ msg: 'Error creating the restaurant' });
 
@@ -233,7 +244,6 @@ const deletePromotion = async (req, res) => {
 //update restaurant
 
 //delete restaurant
-//TODO: delete reviews
 const deleteRestaurant = async (req, res) => {
     const { id } = req.params;
     const userId = req.userid;
@@ -266,6 +276,7 @@ const deleteRestaurant = async (req, res) => {
         }, { new: true })
         if (!user) return res.status(500).json({ msg: 'Error updating user' });  
 
+        await Review.findByIdAndDelete(id);
         await Restaurant.findByIdAndDelete(id);
             
         const token = generateToken(user._id, user.role);        

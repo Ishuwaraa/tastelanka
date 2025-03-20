@@ -54,7 +54,11 @@ const restaurantSchema = new Schema({
             required: true
         }
     }],
-    priceRange: [String]
+    priceRange: [String],
+    embedding: {
+        type: String,
+        required: true
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model("Restaurant", restaurantSchema);
