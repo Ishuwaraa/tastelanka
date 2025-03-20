@@ -5,6 +5,7 @@ const Review = require('../model/ReviewModel');
 const { getImageUrl, getArrayOfImageUrls, deleteImages } = require('../middleware/awsMiddleware');
 const { cookieOptions } = require('../controller/userController');
 const { generateToken } = require('../middleware/authMiddleware');
+const axios = require('axios');
 
 //get all restaurants
 const getAllRestaurants = async (req, res) => {
@@ -62,6 +63,33 @@ const getRestaurantById = async (req, res) => {
 //get restaurant by name, location etc.
 
 //get restaurant recommendations
+const getRestaurantRecommendations = async (req, res) => {
+    const { query } = req.body;
+
+    try {
+        if (!query) return res.status(400).json({ error: 'No search query provided' });        
+                
+        const flaskResponse = await axios.post('http://localhost:5000/recommend', {
+            query: query
+        });
+        
+        const recommendedIds = flaskResponse.data.recommended_ids.map(id => new mongoose.Types.ObjectId(id));
+            
+        const restaurants = await Restaurant.find({
+            _id: { $in: recommendedIds }
+        });
+                
+        //preserve the order of recommendations
+        // const sortedRestaurants = recommendedIds.map(id => 
+        //     restaurants.find(restaurant => restaurant._id.toString() === id)
+        // ).filter(Boolean);
+        
+        res.status(200).json(restaurants);
+        
+    } catch (err) {        
+        res.status(500).json({ msg: err.message });
+    }
+}
 
 //create restaurant
 const createRestaurant = async (req, res) => {
@@ -248,4 +276,4 @@ const deleteRestaurant = async (req, res) => {
     }
 }
 
-module.exports = { getAllRestaurants, getRestaurantById, createRestaurant, addPromotion, editPromotion, deletePromotion, deleteRestaurant };
+module.exports = { getAllRestaurants, getRestaurantById, getRestaurantRecommendations, createRestaurant, addPromotion, editPromotion, deletePromotion, deleteRestaurant };
