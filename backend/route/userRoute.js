@@ -8,6 +8,7 @@ router.post('/login', users.login);
 router.get('/logout', users.logout);
 router.get('/', verifyJwt, users.getUserData);
 router.patch('/', verifyJwt, users.updateUserData);
+router.get("/check", verifyJwt, users.checkAuth);
 router.patch('/pass', verifyJwt, users.updatePass);
 router.post('/del', verifyJwt, users.deleteAcc);
 router.post('/forgot-pass', users.forgotPass);

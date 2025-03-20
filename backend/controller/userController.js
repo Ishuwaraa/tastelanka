@@ -8,7 +8,7 @@ const { generateToken, genResetPassToken } = require('../middleware/authMiddlewa
 const cookieOptions = {
     httpOnly: true, 
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'none',   //TODO: change this
+    sameSite: 'strict',
     maxAge: 3 * 24 * 60 * 60 * 1000    //exp in 3d
 }
 
@@ -79,6 +79,17 @@ const login = async (req, res) => {
         res.status(500).json({ msg: err.message });
     }
 };
+
+const checkAuth = async (req, res) => {
+    const userid = req.userid;
+    const role = req.role;
+
+    try {
+        res.status(200).json({ userid, role });
+    } catch (err) {
+        res.status(500).json({ msg: err.message });
+    }
+}
 
 const logout = (req, res) => {
     const cookies = req.cookies;
@@ -290,4 +301,4 @@ const resetPass = async (req, res) => {
     }
 }
 
-module.exports = { cookieOptions, register, login, logout, getUserData, updateUserData, updatePass, deleteAcc, forgotPass, resetPass };
+module.exports = { cookieOptions, register, login, checkAuth, logout, getUserData, updateUserData, updatePass, deleteAcc, forgotPass, resetPass };
