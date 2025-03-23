@@ -15,6 +15,7 @@ const getReviews = async (req, res) => {
         const reviewDoc = await Review.findById(restaurant._id).populate('reviews.user', '-password');
         const reviewsArray = reviewDoc? reviewDoc.reviews : [];
 
+        //directly modifies reviewDoc.reviews cuz reviewsArray is not a copy but a reference
         await Promise.all(reviewsArray.map(async (review) => {
             review.images = await getArrayOfImageUrls(review.images, 3600);
         }))

@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
 const User = require('../model/UserModel');
+const Restaurant = require('../model/RestaurantModel');
+const Review = require('../model/ReviewModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const { generateToken, genResetPassToken } = require('../middleware/authMiddleware');
+const { getArrayOfImageUrls, getImageUrl } = require('../middleware/awsMiddleware');
 
 const cookieOptions = {
     httpOnly: true, 
@@ -151,6 +154,48 @@ const checkRestaurantId = async (req, res) => {
     }
 }
 
+const getUserRestaurant = async (req, res) => {
+    const userId = req.userid;
+    const role = req.role;
+
+    try {
+        if (role !== 'owner') return res.status(401).json({ msg: 'Not allowed' });
+
+        const user = await User.findById(userId).select('-password');
+        
+        const restaurant = await Restaurant.findById(user.restaurant);
+        if (!restaurant) return res.status(404).json({ msg: 'No restaurant found' });
+
+        if (restaurant.thumbnail !== null) {
+            restaurant.thumbnail = await getImageUrl(restaurant.thumbnail, 3600);            
+        }
+        if (restaurant.menu.length !== 0) {
+            restaurant.menu = await getArrayOfImageUrls(restaurant.menu, 3600);
+        }
+        if (restaurant.images.length !== 0) {
+            restaurant.images = await getArrayOfImageUrls(restaurant.images, 3600);
+        }
+        await Promise.all(
+            restaurant.promotions.map(async (promotion) => {
+                if (promotion.thumbnail !== null) {
+                    promotion.thumbnail = await getImageUrl(promotion.thumbnail, 3600);
+                }
+            })
+        )
+                
+        const reviewDoc = await Review.findById(user.restaurant).populate('reviews.user', '-password');
+        const reviewsArray = reviewDoc? reviewDoc.reviews : [];
+        await Promise.all(reviewsArray.map(async (review) => {
+            review.images = await getArrayOfImageUrls(review.images, 3600);
+        }))
+
+
+        res.status(200).json({ restaurant, reviewDoc })
+    } catch (err) {
+        res.status(500).json({ msg: err.message });
+    }
+}
+
 //update profile pic
 
 //update user data
@@ -185,7 +230,7 @@ const updatePass = async (req, res) => {
         if(!user) return res.status(404).json({ msg: 'No user found' });
 
         const match = await bcrypt.compare(currPass, user.password);
-        if(!match) return res.status(404).json({ msg: 'Incorrect password' });
+        if(!match) return res.status(400).json({ msg: 'Incorrect password' });
         
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(newPass, salt);
@@ -301,4 +346,4 @@ const resetPass = async (req, res) => {
     }
 }
 
-module.exports = { cookieOptions, register, login, checkAuth, logout, getUserData, updateUserData, updatePass, deleteAcc, forgotPass, resetPass };
+module.exports = { cookieOptions, register, login, checkAuth, logout, getUserData, getUserRestaurant, updateUserData, updatePass, deleteAcc, forgotPass, resetPass };

@@ -7,6 +7,7 @@ router.post('/register', users.register);
 router.post('/login', users.login);
 router.get('/logout', users.logout);
 router.get('/', verifyJwt, users.getUserData);
+router.get('/restaurant', verifyJwt, users.getUserRestaurant);
 router.patch('/', verifyJwt, users.updateUserData);
 router.get("/check", verifyJwt, users.checkAuth);
 router.patch('/pass', verifyJwt, users.updatePass);
