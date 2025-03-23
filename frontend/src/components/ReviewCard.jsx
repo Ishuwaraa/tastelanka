@@ -24,7 +24,7 @@ const ReviewCard = ({ username, profilepic, date, rating, review, images, helpfu
 
             {/* Rating Stars */}
             <div className="flex gap-1 mb-3">
-                <Rating rating={3} />
+                <Rating rating={rating} />
             </div>
 
             {/* Review Text */}

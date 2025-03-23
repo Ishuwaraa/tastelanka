@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Footer from "../components/shared/Footer";
 import Navbar from "../components/shared/Navbar";
 import RestaurantThumbnail from '../assets/restaurant.png';
@@ -19,8 +19,14 @@ import Restaurant1 from '../assets/restaurant1.png';
 import FoodPic from '../assets/food1.png';
 import PromotionsCard from '../components/PromotionsCard';
 import ChatWidget from '../components/ChatWidget';
+import { useLocation } from 'react-router-dom';
+import { axiosInstance } from '../lib/axios';
 
 const Restaurant = () => {
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const restaurantId = searchParams.get('id');
+
     const [images , setImages] = useState(Array(4).fill(null)); //initializing array with 4 null elements
     const [openAllPhotos, setOpenAllPhotos] = useState(false);
     const [openMenu, setOpenMenu] = useState(false);
@@ -29,14 +35,41 @@ const Restaurant = () => {
     const handleCloseAllPics = () => setOpenAllPhotos(false); 
     const handleOpenMenu = () => setOpenMenu(true);
     const handleCloseMenu = () => setOpenMenu(false);
-    const allPhotos = [Restaurant1, RestaurantThumbnail];
+    const allPhotoss = [Restaurant1, RestaurantThumbnail];
     const menuPhotos = [RestaurantThumbnail];
     const reviewPhotos = [FoodPic, RestaurantThumbnail];
+
+    const [restaurantDetails, setRestaurantDetails] = useState({});
+    const [reviews, setReviews] = useState([]);
+    const [allPhotos, setAllPhotos] = useState([]);
+
+    const fetchRestaurantDetails = async () => {
+        try {
+            const { data } = await axiosInstance.get(`restaurant/${restaurantId}`);
+            const reviewRes = await axiosInstance.get(`review/${restaurantId}`);
+            console.log(data);
+            console.log(reviewRes.data);
+            setRestaurantDetails(data);
+            setReviews(reviewRes.data?.reviews);
+
+            const menuImages = data?.menu || [];
+            const restaurantImages = data?.images || [];
+            const reviewImages = reviewRes.data?.reviews?.flatMap(review => review.images || []) || [];
+            const allImages = [...restaurantImages, ...menuImages, ...reviewImages];
+            setAllPhotos(allImages);
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    useEffect(() => {
+        fetchRestaurantDetails();
+    }, []);
 
     return ( 
         <>
         <Navbar />
-        <ChatWidget />
+        <ChatWidget restaurantName={restaurantDetails ? restaurantDetails?.name : "loading..."}/>
         <div className="page">
             <div className="mx-auto">
                 {/* Hero Section */}
@@ -46,12 +79,12 @@ const Restaurant = () => {
                     
                     {/* Content overlay */}
                     <div className="absolute bottom-0 left-0 p-6 text-white">
-                        <h1 className="text-4xl font-bold mb-2">King of the Mambo</h1>
+                        <h1 className="text-4xl font-bold mb-2">{restaurantDetails?.name}</h1>
                         
                         {/* Rating */}
                         <div className="flex items-center gap-2 mb-2">
-                            <Rating rating={3} />
-                            <span className="text-sm ml-2">593 reviews</span>
+                            <Rating rating={restaurantDetails?.rating} />
+                            <span className="text-sm ml-2">{reviews?.length > 0 ? `${reviews.length} reviews` : 'No reviews yet'}</span>
                         </div>
                         
                         {/* Category and Hours */}
@@ -63,25 +96,38 @@ const Restaurant = () => {
                         </div>
                         
                         {/* Photos Link */}
-                        <div className="absolute bottom-6 right-6">
+                        {/* <div className="absolute bottom-6 right-6">
                             <button className="text-white text-sm border p-2 rounded-md" onClick={handleOpenAllPics}>See all 55 photos</button>
                         </div>
                         <PreviewImagesModal 
                             open={openAllPhotos}
                             handleClose={handleCloseAllPics}
-                            images={allPhotos}                            
-                        />
+                            images={allPhotos}
+                        /> */}
                     </div>
                 </div>
 
                 {/* Action Buttons */}
                 <div className="flex gap-4 p-4 border-b">
                     <button className="bg-primary text-white px-6 py-2 rounded-md" onClick={handleOpenMenu}>View Menu</button>
-                    <PreviewImagesModal
-                        open={openMenu}
-                        handleClose={handleCloseMenu}
-                        images={menuPhotos}
-                    />
+                    {(restaurantDetails && restaurantDetails?.menu?.length > 0) && (
+                        <PreviewImagesModal
+                            open={openMenu}
+                            handleClose={handleCloseMenu}
+                            images={restaurantDetails?.menu?.length > 0 ? restaurantDetails?.menu : []}
+                        />
+                    )}
+
+                    <button className="border px-6 py-2 rounded-md flex items-center gap-2" onClick={handleOpenAllPics}>
+                        View all photos
+                    </button>
+                    {allPhotos.length > 0 && (
+                        <PreviewImagesModal 
+                            open={openAllPhotos}
+                            handleClose={handleCloseAllPics}
+                            images={allPhotos}
+                        />
+                    )}
 
                     <button className="border px-6 py-2 rounded-md flex items-center gap-2">
                         <img src={ShareIcon} alt="share" className="w-5"/> Share
@@ -97,37 +143,39 @@ const Restaurant = () => {
                     <div className="md:col-span-2 overflow-y-auto">
 
                         {/* Promotions Section */}
-                        <div>
-                            <h2 className="text-xl font-semibold mb-4">Available Promotions</h2>
-                            
-                            {/* Promotion Cards */}                            
-                            <div className="space-y-4 md:w-3/4 h-80 overflow-y-scroll">                                
-                                {Array(4).fill(0).map((_, index) => (
-                                    <PromotionsCard 
-                                        key={index}
-                                        thumbnail={Promotion1}
-                                        title="20% OFF"
-                                        description="for all combank credit card users"
-                                    />
-                                ))}
+                        {restaurantDetails?.promotions?.length > 0 &&
+                            <div>
+                                <h2 className="text-xl font-semibold mb-4">Available Promotions</h2>
+                                
+                                {/* Promotion Cards */}                            
+                                <div className="space-y-4 md:w-3/4 h-80 overflow-y-scroll">
+                                    {restaurantDetails?.promotions?.map((promotion) => (
+                                        <PromotionsCard 
+                                            key={promotion._id}
+                                            thumbnail={promotion?.thumbnail}
+                                            title={promotion?.title}
+                                            description={promotion?.description}
+                                        />
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        }
 
                         {/* Reviews */}
                         <div className="space-y-8 mt-10 w-3/4">
-                            {Array(3).fill(0).map((_, index) => (
+                            {reviews?.length > 0 ? reviews.map((review) => (
                                 <ReviewCard
                                     username='ishuwara'
                                     date='2024/02/20'
-                                    rating={2}
-                                    review='Lorem ipsum dolor sit amet consectetur. Interdum congue sit phasellus faucibus nisi eu. Lectus vitae aliquam vitae id sed sed tellus est.'
-                                    helpful={5}
-                                    likes={2}
-                                    dislikes={1}
-                                    images={reviewPhotos}
-                                    key={index}
+                                    rating={review?.rating}
+                                    review={review?.review}
+                                    helpful={review?.helpful}
+                                    likes={review?.likes}
+                                    dislikes={review?.dislikes}
+                                    images={review?.images}
+                                    key={review._id}
                                 />                                
-                            ))}
+                            )) : <p>No reviews yet. Be the first by sharing your experience with us</p>}
                         </div>
                     </div>
 
@@ -136,19 +184,21 @@ const Restaurant = () => {
                         {/* Contact Information */}
                         <div className="flex flex-col gap-y-10 border rounded-lg p-6">
                             <a href="tel:(415) 702-6096" className="flex items-center justify-between gap-4">
-                                <span>(415) 702-6096</span>
+                                <span>{restaurantDetails?.contact}</span>
                                 <img src={Phone} alt="phone" className=" w-5"/>
                             </a>
                         
-                            <a href="/" className="flex items-center justify-between gap-4 ">
-                                <span className="text-blue-600">kingmambo.com</span>
-                                <img src={Globe} alt="website" className="w-5"/>
-                            </a>
+                            {restaurantDetails?.webUrl &&
+                                <a href="/" className="flex items-center justify-between gap-4 ">
+                                    <span className="text-blue-600">{restaurantDetails?.webUrl}</span>
+                                    <img src={Globe} alt="website" className="w-5"/>
+                                </a>
+                            }
                         
                             <a href="#directions" className="flex items-center justify-between gap-4 ">
                                 <div>
                                     <p>Get Directions</p>
-                                    <p className="text-sm text-gray-600">1722 Taraval St Colombo 07, Sri Lanka</p>
+                                    <p className="text-sm text-gray-600">{restaurantDetails?.location}</p>
                                 </div>
                                 <img src={Compass} alt="location" className="w-5"/>
                             </a>

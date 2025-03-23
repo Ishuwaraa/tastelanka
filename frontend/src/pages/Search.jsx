@@ -2,8 +2,15 @@ import RestaurantCard from "../components/RestaurantCard";
 import Footer from "../components/shared/Footer";
 import Navbar from "../components/shared/Navbar";
 import RestaurantImg from '../assets/restaurant2.png'
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Search = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const searchParams = new URLSearchParams(location.search);
+    const searchQuery = searchParams.get('q');
+    console.log(searchQuery);
+
     return ( 
         <>
             <Navbar />

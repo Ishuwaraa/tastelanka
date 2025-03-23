@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ProfilePic from "../assets/profilepic.png";
 
-const ChatWidget = () => {
+const ChatWidget = ({ restaurantName }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [message, setMessage] = useState('');
 
@@ -37,7 +37,7 @@ const ChatWidget = () => {
                     <div className="mr-3">
                         <img src={ProfilePic} alt="Restaurant" className="w-10 h-10 rounded-full" />
                     </div>
-                    <div className="font-bold">King of the Mambo</div>
+                    <div className="font-bold">{restaurantName}</div>
                 </div>
 
                 {/* Messages Container */}

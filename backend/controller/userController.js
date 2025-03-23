@@ -38,7 +38,7 @@ const register = async (req, res) => {
             await newUser.save();
 
             res.cookie("jwt", token, cookieOptions);
-            res.status(201).json({ id: newUser._id, email: newUser.email });            
+            res.status(201).json({ id: newUser._id, role: newUser.role });            
         } else {
             res.status(500).json({ msg: "Account creation failed" });
         }
@@ -74,7 +74,7 @@ const login = async (req, res) => {
             res.cookie("jwt", token, cookieOptions);
         } 
   
-        res.status(200).json({ id: user._id, email: user.email });
+        res.status(200).json({ id: user._id, role: user.role });
     } catch (err) {
         res.status(500).json({ msg: err.message });
     }

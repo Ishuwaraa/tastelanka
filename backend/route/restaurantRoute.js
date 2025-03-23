@@ -6,7 +6,7 @@ const { verifyJwt } = require('../middleware/authMiddleware');
 
 router.get('/recommend', restaurants.getRestaurantRecommendations);
 router.get('/', restaurants.getAllRestaurants);
-router.get('/:id', verifyJwt, restaurants.getRestaurantById);
+router.get('/:id', restaurants.getRestaurantById);
 router.post('/', verifyJwt, upload, restaurants.createRestaurant);
 router.delete('/:id', verifyJwt, restaurants.deleteRestaurant);
 

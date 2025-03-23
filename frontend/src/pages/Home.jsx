@@ -7,11 +7,29 @@ import CategoryCard from "../components/CategoryCard";
 import HeroImage from '../assets/hero.png';
 import HeroImage1 from '../assets/hero1.png';
 import RecommendationInput from "../components/RecommendationInput";
+import { useEffect, useState } from "react";
+import { axiosInstance } from "../lib/axios";
 
 
 const categories = ['Sri Lankan Authentic', 'Vegetarian', 'HALAL Certified', 'Fast Food', 'Chinese', 'Indian']
 
 const Home = () => {
+    const [topRestaurants, setTopRestaurants] = useState([]);
+
+    const fetchTopRestaurats = async () => {
+        try {
+            const { data } = await axiosInstance.get('/restaurant');
+            const sortedRestaurants = data?.restaurants.sort((a, b) => b.rating - a.rating);
+            setTopRestaurants(sortedRestaurants);
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    useEffect(() => {
+        fetchTopRestaurats();
+    }, [])
+
     return ( 
         <>
             <Navbar />
@@ -32,32 +50,32 @@ const Home = () => {
 
                 <div className="section">
                     <div className="mb-8 flex justify-center">
+                        <p className=" text-2xl md:text-3xl font-semibold">Describe your meal, and we'll find the perfect spot!</p>
+                    </div>
+                    <RecommendationInput />
+                </div>
+
+                <div className="section">
+                    <div className="mb-8 flex justify-center">
                         <p className=" text-2xl md:text-3xl font-semibold">Trending Restaurants</p>
                     </div>
                     <div>
                         <div className="flex justify-center">
                             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-                                {Array(3).fill(0).map((_, index) => (
-                                    <a href={`/restaurant?id=${index}`} key={index}>
+                                {topRestaurants.length > 0 && topRestaurants.slice(0, 3).map((restaurant, index) => (
+                                    <a href={`/restaurant?id=${restaurant._id}`} key={index}>
                                         <TrendingRestaurantCard
-                                            restaurant='King of the Manmbo'
-                                            location='Colombo 3'
+                                            restaurant={restaurant?.name}
+                                            location={restaurant?.location}
                                             reviews={420}
-                                            rating={Math.floor(Math.random() * 6)}
-                                        />                                    
+                                            rating={restaurant?.rating}
+                                        />
                                     </a>
                                 ))}
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div className="section">
-                    <div className="mb-8 flex justify-center">
-                        <p className=" text-2xl md:text-3xl font-semibold">Describe your meal, and we'll find the perfect spot!</p>
-                    </div>
-                    <RecommendationInput />
-                </div>
+                </div>                
 
                 <div className="section grid grid-cols-1 md:grid-cols-3 justify-between">
                     <div className="md:col-span-2 flex flex-col justify-center">
