@@ -1,8 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Footer from "../components/shared/Footer";
 import Navbar from "../components/shared/Navbar";
-import RestaurantThumbnail from '../assets/restaurant.png';
-import Promotion1 from '../assets/promotion1.png';
 import Compass from '../assets/compass.png';
 import Globe from '../assets/globe.png';
 import Phone from '../assets/phone-call.png';
@@ -11,12 +9,10 @@ import ReviewCard from "../components/ReviewCard";
 import MapImg from '../assets/map.png';
 import { useState } from "react";
 import PreviewImagesModal from '../components/PreviewImagesModal';
-import Restaurant1 from '../assets/restaurant1.png';
-import FoodPic from '../assets/food1.png';
 import PromotionsCard from '../components/PromotionsCard';
+import { axiosInstance } from '../lib/axios';
 
-const MyRestaurant = () => {
-    const [images , setImages] = useState(Array(4).fill(null)); //initializing array with 4 null elements
+const MyRestaurant = () => {    
     const [openAllPhotos, setOpenAllPhotos] = useState(false);
     const [openMenu, setOpenMenu] = useState(false);
 
@@ -24,9 +20,32 @@ const MyRestaurant = () => {
     const handleCloseAllPics = () => setOpenAllPhotos(false); 
     const handleOpenMenu = () => setOpenMenu(true);
     const handleCloseMenu = () => setOpenMenu(false);
-    const allPhotos = [Restaurant1, RestaurantThumbnail];
-    const menuPhotos = [RestaurantThumbnail];
-    const reviewPhotos = [FoodPic, RestaurantThumbnail];
+
+    const [restaurantDetails, setRestaurantDetails] = useState({});
+    const [reviews, setReviews] = useState([]);
+    const [allPhotos, setAllPhotos] = useState([]);
+
+    const fetchRestaurantData = async () => {
+        try {
+            const { data } = await axiosInstance.get('user/restaurant')
+            console.log(data?.restaurant);
+            console.log(data?.reviewDoc?.reviews);
+            setRestaurantDetails(data?.restaurant);
+            setReviews(data?.reviewDoc?.reviews);
+
+            const menuImages = data?.restaurant?.menu || [];
+            const restaurantImages = data?.restaurant?.images || [];
+            const reviewImages = data?.reviewDoc?.reviews?.flatMap(review => review.images || []) || [];
+            const allImages = [...restaurantImages, ...menuImages, ...reviewImages];
+            setAllPhotos(allImages);
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    useEffect(() => {
+        fetchRestaurantData();
+    }, []);
 
     return ( 
         <>
@@ -35,17 +54,17 @@ const MyRestaurant = () => {
             <div className="mx-auto">
                 {/* Hero Section */}
                 <div className="relative h-72">
-                    <img src={RestaurantThumbnail} alt="Restaurant" className="w-full h-full object-cover" />
+                    <img src={restaurantDetails?.thumbnail} alt="Restaurant" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/50"></div>
                     
                     {/* Content overlay */}
                     <div className="absolute bottom-0 left-0 p-6 text-white">
-                        <h1 className="text-4xl font-bold mb-2">King of the Mambo | here let the owner reply to the reviews</h1>
+                        <h1 className="text-4xl font-bold mb-2">{restaurantDetails?.name} | here let the owner reply to the reviews</h1>
                         
                         {/* Rating */}
                         <div className="flex items-center gap-2 mb-2">
-                            <Rating rating={3} />
-                            <span className="text-sm ml-2">593 reviews</span>
+                            <Rating rating={restaurantDetails?.rating} />
+                            <span className="text-sm ml-2">{reviews?.length > 0 ? `${reviews.length} reviews` : 'No reviews yet'}</span>
                         </div>
                         
                         {/* Category and Hours */}
@@ -57,14 +76,14 @@ const MyRestaurant = () => {
                         </div>
                         
                         {/* Photos Link */}
-                        <div className="absolute bottom-6 right-6">
+                        {/* <div className="absolute bottom-6 right-6">
                             <button className="text-white text-sm border p-2 rounded-md" onClick={handleOpenAllPics}>See all 55 photos</button>
                         </div>
                         <PreviewImagesModal 
                             open={openAllPhotos}
                             handleClose={handleCloseAllPics}
-                            images={allPhotos}                            
-                        />
+                            images={allPhotoss}                            
+                        /> */}
                     </div>
                 </div>            
 
@@ -75,11 +94,24 @@ const MyRestaurant = () => {
                     <button className="border px-6 py-2 rounded-md flex items-center gap-2"  onClick={handleOpenMenu}>
                         View Menu
                     </button>
-                    <PreviewImagesModal
-                        open={openMenu}
-                        handleClose={handleCloseMenu}
-                        images={menuPhotos}
-                    />                    
+                    {(restaurantDetails && restaurantDetails?.menu?.length > 0) && (
+                        <PreviewImagesModal
+                            open={openMenu}
+                            handleClose={handleCloseMenu}
+                            images={restaurantDetails?.menu?.length > 0 ? restaurantDetails?.menu : []}
+                        />
+                    )}
+
+                    <button className="border px-6 py-2 rounded-md flex items-center gap-2" onClick={handleOpenAllPics}>
+                        View all photos
+                    </button>
+                    {allPhotos.length > 0 && (
+                        <PreviewImagesModal 
+                            open={openAllPhotos}
+                            handleClose={handleCloseAllPics}
+                            images={allPhotos}
+                        />
+                    )}
                 </div>
 
                 {/* Main Content Grid */}
@@ -88,40 +120,47 @@ const MyRestaurant = () => {
                     <div className="md:col-span-2 overflow-y-auto">
 
                         {/* Promotions Section */}
-                        <div>
-                            <div className="flex gap-5 mb-3">
-                                <h2 className="text-xl font-semibold mb-4">Available Promotions</h2>
-                                <button className="border border-primary text-primary px-2 py-1 rounded-md">Add Promotions</button>
+                        {restaurantDetails?.promotions?.length > 0 &&
+                            <div>
+                                <div className="flex gap-5 mb-3">
+                                    <h2 className="text-xl font-semibold mb-4">Your Current Promotions</h2>
+                                    <button className="border border-primary text-primary px-2 py-1 rounded-md">Add Promotions</button>
+                                </div>
+                                
+                                {/* Promotion Cards */}
+                                <div className="space-y-4 md:w-3/4 h-80 overflow-y-scroll">                                
+                                    {restaurantDetails?.promotions?.map((promotion) => (
+                                        <PromotionsCard 
+                                            key={promotion._id}
+                                            thumbnail={promotion?.thumbnail}
+                                            title={promotion?.title}
+                                            description={promotion?.description}
+                                        />
+                                    ))}
+                                </div>                            
                             </div>
-                            
-                            {/* Promotion Cards */}
-                            <div className="space-y-4 md:w-3/4 h-80 overflow-y-scroll">                                
-                                {Array(6).fill(0).map((_, index) => (
-                                    <PromotionsCard 
-                                        key={index}
-                                        thumbnail={Promotion1}
-                                        title="20% OFF"
-                                        description="for all combank credit card users"
-                                    />
-                                ))}
-                            </div>                            
-                        </div>
+                        }
 
                         {/* Reviews */}
                         <div className="space-y-8 mt-10 w-3/4">
-                            {Array(3).fill(0).map((_, index) => (
-                                <ReviewCard
-                                    username='ishuwara'
-                                    date='2024/02/20'
-                                    rating={2}
-                                    review='Lorem ipsum dolor sit amet consectetur. Interdum congue sit phasellus faucibus nisi eu. Lectus vitae aliquam vitae id sed sed tellus est.'
-                                    helpful={5}
-                                    likes={2}
-                                    dislikes={1}
-                                    images={reviewPhotos}
-                                    key={index}
-                                />                                
-                            ))}
+                            {reviews?.length > 0 ? reviews.map((review) => {
+                                const date = review.createdAt;
+                                const formatted = new Date(date);
+
+                                return (
+                                    <ReviewCard
+                                        username={review?.user?.name}
+                                        profilePic={review?.user?.profilePic}
+                                        date={formatted.toLocaleDateString()}
+                                        rating={review?.rating}
+                                        review={review?.review}
+                                        helpful={review?.helpful}
+                                        likes={review?.likes}
+                                        dislikes={review?.dislikes}
+                                        images={review?.images}
+                                        key={review._id}
+                                    />
+                            )}) : <p>No reviews yet.</p>}
                         </div>
                     </div>
 
@@ -130,19 +169,21 @@ const MyRestaurant = () => {
                         {/* Contact Information */}
                         <div className="flex flex-col gap-y-10 border rounded-lg p-6">
                             <a href="tel:(415) 702-6096" className="flex items-center justify-between gap-4">
-                                <span>(415) 702-6096</span>
+                                <span>{restaurantDetails?.contact}</span>
                                 <img src={Phone} alt="phone" className=" w-5"/>
                             </a>
                         
-                            <a href="/" className="flex items-center justify-between gap-4 ">
-                                <span className="text-blue-600">kingmambo.com</span>
-                                <img src={Globe} alt="website" className="w-5"/>
-                            </a>
+                            {restaurantDetails?.webUrl &&
+                                <a href="/" className="flex items-center justify-between gap-4 ">
+                                    <span className="text-blue-600">{restaurantDetails?.webUrl}</span>
+                                    <img src={Globe} alt="website" className="w-5"/>
+                                </a>
+                            }
                         
                             <a href="#directions" className="flex items-center justify-between gap-4 ">
                                 <div>
-                                    <p>Get Directions</p>
-                                    <p className="text-sm text-gray-600">1722 Taraval St Colombo 07, Sri Lanka</p>
+                                    <p>Restaurant Location</p>
+                                    <p className="text-sm text-gray-600">{restaurantDetails?.location}</p>
                                 </div>
                                 <img src={Compass} alt="location" className="w-5"/>
                             </a>                                                

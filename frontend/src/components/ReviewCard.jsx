@@ -1,12 +1,12 @@
 import Heart from '../assets/heart.png';
 import HelpFul from '../assets/helpful.png';
 import ThumbsDown from '../assets/thumbs-down.png';
-import ProfilePic from '../assets/profilepic.png';
+import DummyPic from "../assets/dummy.jpg";
 import Rating from './shared/Rating';
 import PreviewImagesModal from './PreviewImagesModal';
 import { useState } from 'react';
 
-const ReviewCard = ({ username, profilepic, date, rating, review, images, helpful, likes, dislikes}) => {
+const ReviewCard = ({ username, profilePic, date, rating, review, images, helpful, likes, dislikes}) => {
     const [openReviewPhotos, setOpenReviewPhotos] = useState(false);    
 
     const handleOpenReviewPics = () => setOpenReviewPhotos(true);
@@ -15,7 +15,7 @@ const ReviewCard = ({ username, profilepic, date, rating, review, images, helpfu
     return (         
         <div className="border-b pb-6">
             <div className="flex items-center gap-3 mb-4">
-                <img src={ProfilePic} alt="profile pic" className="w-12 h-12 rounded-full"/>
+                <img src={profilePic ? profilePic : DummyPic} alt="profile pic" className="w-12 h-12 rounded-full"/>
                 <div>
                     <h3 className="font-semibold">{username}</h3>
                     <p className="text-sm text-gray-500">{date}</p>

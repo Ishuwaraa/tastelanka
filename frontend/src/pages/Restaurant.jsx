@@ -2,8 +2,6 @@ import React, { useEffect } from 'react';
 import Footer from "../components/shared/Footer";
 import Navbar from "../components/shared/Navbar";
 import RestaurantThumbnail from '../assets/restaurant.png';
-import Promotion1 from '../assets/promotion1.png';
-import Promotion2 from '../assets/promotion2.png';
 import BookMark from '../assets/bookmark.png';
 import Compass from '../assets/compass.png';
 import Globe from '../assets/globe.png';
@@ -15,8 +13,6 @@ import ReviewCard from "../components/ReviewCard";
 import MapImg from '../assets/map.png';
 import { useState } from "react";
 import PreviewImagesModal from '../components/PreviewImagesModal';
-import Restaurant1 from '../assets/restaurant1.png';
-import FoodPic from '../assets/food1.png';
 import PromotionsCard from '../components/PromotionsCard';
 import ChatWidget from '../components/ChatWidget';
 import { useLocation } from 'react-router-dom';
@@ -34,10 +30,7 @@ const Restaurant = () => {
     const handleOpenAllPics = () => setOpenAllPhotos(true);
     const handleCloseAllPics = () => setOpenAllPhotos(false); 
     const handleOpenMenu = () => setOpenMenu(true);
-    const handleCloseMenu = () => setOpenMenu(false);
-    const allPhotoss = [Restaurant1, RestaurantThumbnail];
-    const menuPhotos = [RestaurantThumbnail];
-    const reviewPhotos = [FoodPic, RestaurantThumbnail];
+    const handleCloseMenu = () => setOpenMenu(false);    
 
     const [restaurantDetails, setRestaurantDetails] = useState({});
     const [reviews, setReviews] = useState([]);
@@ -74,7 +67,7 @@ const Restaurant = () => {
             <div className="mx-auto">
                 {/* Hero Section */}
                 <div className="relative h-72">
-                    <img src={RestaurantThumbnail} alt="Restaurant" className="w-full h-full object-cover" />
+                    <img src={restaurantDetails?.thumbnail} alt="Restaurant" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/50"></div>
                     
                     {/* Content overlay */}
@@ -163,19 +156,24 @@ const Restaurant = () => {
 
                         {/* Reviews */}
                         <div className="space-y-8 mt-10 w-3/4">
-                            {reviews?.length > 0 ? reviews.map((review) => (
-                                <ReviewCard
-                                    username='ishuwara'
-                                    date='2024/02/20'
-                                    rating={review?.rating}
-                                    review={review?.review}
-                                    helpful={review?.helpful}
-                                    likes={review?.likes}
-                                    dislikes={review?.dislikes}
-                                    images={review?.images}
-                                    key={review._id}
-                                />                                
-                            )) : <p>No reviews yet. Be the first by sharing your experience with us</p>}
+                            {reviews?.length > 0 ? reviews.map((review) => {
+                                const date = review.createdAt;
+                                const formatted = new Date(date);
+
+                                return (
+                                    <ReviewCard
+                                        username={review?.user?.name}
+                                        profilePic={review?.user?.profilePic}
+                                        date={formatted.toLocaleDateString()}
+                                        rating={review?.rating}
+                                        review={review?.review}
+                                        helpful={review?.helpful}
+                                        likes={review?.likes}
+                                        dislikes={review?.dislikes}
+                                        images={review?.images}
+                                        key={review._id}
+                                    />
+                            )}) : <p>No reviews yet. Be the first by sharing your experience with us</p>}
                         </div>
                     </div>
 

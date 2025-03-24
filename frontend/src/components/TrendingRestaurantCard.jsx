@@ -1,10 +1,9 @@
-import RestaurantImg from '../assets/restaurant2.png';
 import Rating from './shared/Rating'
 
-const TrendingRestaurantCard = ({ restaurant, location, reviews, rating }) => {
+const TrendingRestaurantCard = ({ restaurant, location, reviews, rating, thumbnail }) => {
     return ( 
         <div className=" card"> 
-            <img src={RestaurantImg} alt={restaurant} className=" w-full h-48 object-cover" />
+            <img src={thumbnail} alt={restaurant} className=" w-full h-48 object-cover" />
             <div className="m-4">
                 <span className=" text-lg font-medium line-clamp-2 mb-1">{restaurant}</span>
                 <span className="block text-gray-600 font-medium text-sm line-clamp-2">{location}</span>

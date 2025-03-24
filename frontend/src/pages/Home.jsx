@@ -66,8 +66,9 @@ const Home = () => {
                                     <a href={`/restaurant?id=${restaurant._id}`} key={index}>
                                         <TrendingRestaurantCard
                                             restaurant={restaurant?.name}
+                                            thumbnail={restaurant?.thumbnail}
                                             location={restaurant?.location}
-                                            reviews={420}
+                                            reviews={Math.floor(Math.random() * 10) + 1}
                                             rating={restaurant?.rating}
                                         />
                                     </a>
