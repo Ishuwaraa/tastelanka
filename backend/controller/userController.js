@@ -88,7 +88,7 @@ const checkAuth = async (req, res) => {
     const role = req.role;
 
     try {
-        res.status(200).json({ userid, role });
+        res.status(200).json({ id: userid, role });
     } catch (err) {
         res.status(500).json({ msg: err.message });
     }

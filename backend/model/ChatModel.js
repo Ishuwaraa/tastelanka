@@ -12,7 +12,7 @@ const chatSchema = new Schema({
         required: true,
         ref: "User"
     },
-    message: {
+    text: {
         type: String
     }
 }, { timestamps: true });

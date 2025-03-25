@@ -17,11 +17,13 @@ import PromotionsCard from '../components/PromotionsCard';
 import ChatWidget from '../components/ChatWidget';
 import { useLocation } from 'react-router-dom';
 import { axiosInstance } from '../lib/axios';
+import { useAuthStore } from '../store/useAuthStore';
 
 const Restaurant = () => {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const restaurantId = searchParams.get('id');
+    const { authUser } = useAuthStore();
 
     const [images , setImages] = useState(Array(4).fill(null)); //initializing array with 4 null elements
     const [openAllPhotos, setOpenAllPhotos] = useState(false);
@@ -62,7 +64,19 @@ const Restaurant = () => {
     return ( 
         <>
         <Navbar />
-        <ChatWidget restaurantName={restaurantDetails ? restaurantDetails?.name : "loading..."}/>
+        {authUser ? (
+            <ChatWidget 
+                restaurantName={restaurantDetails ? restaurantDetails?.name : "loading..."} 
+                ownerId={restaurantDetails ? restaurantDetails?.owner : null}
+                profilePic={restaurantDetails?.thumbnail}
+            />
+        ) : (
+            <div className="fixed bottom-4 right-4 z-50">                        
+                <button onClick={() => window.location.href = '/login'} className="bg-primary text-white py-2 px-4 rounded-md shadow-lg">
+                    Chat with us 
+                </button>
+            </div>
+        )}
         <div className="page">
             <div className="mx-auto">
                 {/* Hero Section */}

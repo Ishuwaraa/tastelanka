@@ -1,24 +1,42 @@
-import { useState } from 'react';
-import ProfilePic from "../assets/profilepic.png";
+import { useEffect, useState } from 'react';
+import { useChatStore } from '../store/useChatStore';
+import { useAuthStore } from '../store/useAuthStore';
+import DummyPic from "../assets/dummy.jpg";
 
-const ChatWidget = ({ restaurantName }) => {
+const ChatWidget = ({ restaurantName, ownerId, profilePic }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [message, setMessage] = useState('');
+    const [text, setText] = useState('');
+    const { onlineUsers, authUser } = useAuthStore();
+    const { messages, getMessages, sendMessage, selectedUser, setSelectedUser, subscribeToMessages, unsubscribeFromMessages } = useChatStore();
 
     const toggleChat = () => {
         setIsOpen(!isOpen);
     };
 
-    const handleSendMessage = (e) => {
+    const handleSendMessage =  async (e) => {
         e.preventDefault();
-        setMessage('');
+        
+        try {
+            await sendMessage({ text });
+            setText('');
+        } catch (err) {
+            console.log(err.message);
+        }
     };
 
+    useEffect(() => {
+        getMessages(ownerId);
+
+        subscribeToMessages();
+
+        return () => unsubscribeFromMessages();
+    }, [ownerId, getMessages, subscribeToMessages, unsubscribeFromMessages])
+
     return (
-        <div className="fixed bottom-4 right-4 z-50">            
+        <div className="fixed bottom-4 right-4 z-50" onClick={() => setSelectedUser({ id: ownerId })}>            
             {!isOpen && (
                 <button onClick={toggleChat} className="bg-primary text-white py-2 px-4 rounded-md shadow-lg">
-                    Chat with us
+                    Chat with us 
                 </button>
             )}
             
@@ -35,15 +53,44 @@ const ChatWidget = ({ restaurantName }) => {
                 {/* Restaurant Info */}
                 <div className="p-3 flex items-center border-b">
                     <div className="mr-3">
-                        <img src={ProfilePic} alt="Restaurant" className="w-10 h-10 rounded-full" />
+                        <img src={profilePic} alt="Restaurant" className="w-10 h-10 rounded-full" />
                     </div>
                     <div className="font-bold">{restaurantName}</div>
                 </div>
 
                 {/* Messages Container */}
                 <div className="h-64 overflow-y-auto p-3 bg-gray-50">
+                    {messages.map((message, index) => {
+                        return (message?.sender?._id === authUser?.id) ? (
+                            <div className="mb-4" key={index}>
+                                <div className="flex items-start">
+                                    <img src={message?.sender?.profilePic ? message?.sender?.profilePic : DummyPic} alt="User" className="w-8 h-8 rounded-full mr-2" />
+                                    <div>
+                                        <div className="flex items-center">
+                                            <span className="font-medium mr-2">You</span>
+                                            <span className="text-xs text-gray-500">8:24 PM</span>
+                                        </div>
+                                        <p className="text-sm mt-1">{message?.text}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="mb-4" key={index}>
+                                <div className="flex items-start">
+                                    <img src={profilePic} alt="Restaurant" className="w-8 h-8 rounded-full mr-2" />
+                                    <div>
+                                        <div className="flex items-center">
+                                            <span className="font-medium mr-2">{restaurantName}</span>
+                                            <span className="text-xs text-gray-500">7:24 PM</span>
+                                        </div>
+                                        <p className="text-sm mt-1">{message?.text}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })}
                     {/* Restaurant Message */}
-                    <div className="mb-4">
+                    {/* <div className="mb-4">
                         <div className="flex items-start">
                             <img src={ProfilePic} alt="Restaurant" className="w-8 h-8 rounded-full mr-2" />
                             <div>
@@ -56,10 +103,10 @@ const ChatWidget = ({ restaurantName }) => {
                                 </p>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* User Message */}
-                    <div className="mb-4">
+                    {/* <div className="mb-4">
                         <div className="flex items-start">
                             <img src={ProfilePic} alt="User" className="w-8 h-8 rounded-full mr-2" />
                             <div>
@@ -72,49 +119,7 @@ const ChatWidget = ({ restaurantName }) => {
                                 </p>
                             </div>
                         </div>
-                    </div>
-                    <div className="mb-4">
-                        <div className="flex items-start">
-                            <img src={ProfilePic} alt="User" className="w-8 h-8 rounded-full mr-2" />
-                            <div>
-                                <div className="flex items-center">
-                                    <span className="font-medium mr-2">Missaka Rathnapriya</span>
-                                    <span className="text-xs text-gray-500">8:24 PM</span>
-                                </div>
-                                <p className="text-sm mt-1">
-                                    Can you send your Menu plz?
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="mb-4">
-                        <div className="flex items-start">
-                            <img src={ProfilePic} alt="User" className="w-8 h-8 rounded-full mr-2" />
-                            <div>
-                                <div className="flex items-center">
-                                    <span className="font-medium mr-2">Missaka Rathnapriya</span>
-                                    <span className="text-xs text-gray-500">8:24 PM</span>
-                                </div>
-                                <p className="text-sm mt-1">
-                                    Can you send your Menu plz?
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="mb-4">
-                        <div className="flex items-start">
-                            <img src={ProfilePic} alt="User" className="w-8 h-8 rounded-full mr-2" />
-                            <div>
-                                <div className="flex items-center">
-                                    <span className="font-medium mr-2">Missaka Rathnapriya</span>
-                                    <span className="text-xs text-gray-500">8:24 PM</span>
-                                </div>
-                                <p className="text-sm mt-1">
-                                    Can you send your Menu plz?
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Message Input */}
@@ -124,8 +129,8 @@ const ChatWidget = ({ restaurantName }) => {
                             type="text"
                             placeholder="Write a message...."
                             className="flex-1 p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-red-500"
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
+                            value={text}
+                            onChange={(e) => setText(e.target.value)}
                         />
                         <button type="submit" className="ml-2 bg-primary text-white px-4 py-1 rounded-md">
                             Send
