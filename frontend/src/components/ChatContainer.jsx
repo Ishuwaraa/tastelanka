@@ -66,10 +66,10 @@ const ChatContainer = () => {
         
         {/* Message Input */}
         <div className="border-t border-gray-200 p-3 flex">
-            <form action="" onSubmit={handleMessageSubmit}>
+            <form action="" onSubmit={handleMessageSubmit} className="flex w-full gap-2">
                 <textarea
                     rows="2"
-                    className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 resize-none"
+                    className="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 resize-none"
                     placeholder="Write a message..."
                     required
                     onChange={(e) => setText(e.target.value)}

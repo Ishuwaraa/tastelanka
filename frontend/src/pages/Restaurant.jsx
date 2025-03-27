@@ -176,6 +176,7 @@ const Restaurant = () => {
 
                                 return (
                                     <ReviewCard
+                                        restaurantName={restaurantDetails?.name}
                                         username={review?.user?.name}
                                         profilePic={review?.user?.profilePic}
                                         date={formatted.toLocaleDateString()}
@@ -186,6 +187,7 @@ const Restaurant = () => {
                                         dislikes={review?.dislikes}
                                         images={review?.images}
                                         key={review._id}
+                                        ownerReply={review?.reply}
                                     />
                             )}) : <p>No reviews yet. Be the first by sharing your experience with us</p>}
                         </div>

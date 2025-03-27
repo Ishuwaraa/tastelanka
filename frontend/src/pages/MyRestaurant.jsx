@@ -5,12 +5,12 @@ import Compass from '../assets/compass.png';
 import Globe from '../assets/globe.png';
 import Phone from '../assets/phone-call.png';
 import Rating from "../components/shared/Rating";
-import ReviewCard from "../components/ReviewCard";
 import MapImg from '../assets/map.png';
 import { useState } from "react";
 import PreviewImagesModal from '../components/PreviewImagesModal';
 import PromotionsCard from '../components/PromotionsCard';
 import { axiosInstance } from '../lib/axios';
+import OwnerReviewCard from '../components/OwnerReviewCard';
 
 const MyRestaurant = () => {    
     const [openAllPhotos, setOpenAllPhotos] = useState(false);
@@ -59,7 +59,7 @@ const MyRestaurant = () => {
                     
                     {/* Content overlay */}
                     <div className="absolute bottom-0 left-0 p-6 text-white">
-                        <h1 className="text-4xl font-bold mb-2">{restaurantDetails?.name} | here let the owner reply to the reviews</h1>
+                        <h1 className="text-4xl font-bold mb-2">{restaurantDetails?.name}</h1>
                         
                         {/* Rating */}
                         <div className="flex items-center gap-2 mb-2">
@@ -148,7 +148,10 @@ const MyRestaurant = () => {
                                 const formatted = new Date(date);
 
                                 return (
-                                    <ReviewCard
+                                    <OwnerReviewCard
+                                        restaurantName={restaurantDetails?.name}
+                                        restaurantId={restaurantDetails?._id}
+                                        reviewId={review?._id}
                                         username={review?.user?.name}
                                         profilePic={review?.user?.profilePic}
                                         date={formatted.toLocaleDateString()}
@@ -159,6 +162,7 @@ const MyRestaurant = () => {
                                         dislikes={review?.dislikes}
                                         images={review?.images}
                                         key={review._id}
+                                        ownerReply={review?.reply}
                                     />
                             )}) : <p>No reviews yet.</p>}
                         </div>
