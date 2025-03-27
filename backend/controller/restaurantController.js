@@ -61,6 +61,64 @@ const getRestaurantById = async (req, res) => {
 }
 
 //get restaurant by name, location etc.
+const searchRestaurants = async (req, res) => {
+    const { query } = req.query;
+
+    if (!query) return res.status(400).json({ msg: "Search query is required" });    
+
+    try {
+        const restaurants = await Restaurant.find({
+            $or: [
+                { name: { $regex: query, $options: "i" } },  //case insensitive partial match
+                { location: { $regex: query, $options: "i" } } 
+            ]
+        });
+
+        const restaurantDoc = []
+
+        await Promise.all(
+            restaurants.map(async (restaurant) => {
+                if (restaurant.thumbnail !== null) {
+                    restaurant.thumbnail = await getImageUrl(restaurant.thumbnail, 3600);
+                }                
+                const review = await Review.findById(restaurant._id)
+                restaurantDoc.push({ restaurant, review });
+            })
+        );        
+
+        res.status(200).json(restaurantDoc);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
+const getRestaurantsByCategory = async (req, res) => {
+    const { query } = req.query;
+
+    if (!query) return res.status(400).json({ msg: "Category is required" });    
+
+    try {
+        const restaurants = await Restaurant.find({
+            category: { $regex: `^${query}$`, $options: "i" } //case insensitive match
+        });
+
+        const restaurantDoc = []
+
+        await Promise.all(
+            restaurants.map(async (restaurant) => {
+                if (restaurant.thumbnail !== null) {
+                    restaurant.thumbnail = await getImageUrl(restaurant.thumbnail, 3600);
+                }                
+                const review = await Review.findById(restaurant._id)
+                restaurantDoc.push({ restaurant, review });
+            })
+        );  
+
+        res.status(200).json(restaurantDoc);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
 
 //get restaurant recommendations
 const getRestaurantRecommendations = async (req, res) => {
@@ -287,4 +345,5 @@ const deleteRestaurant = async (req, res) => {
     }
 }
 
-module.exports = { getAllRestaurants, getRestaurantById, getRestaurantRecommendations, createRestaurant, addPromotion, editPromotion, deletePromotion, deleteRestaurant };
+module.exports = { getAllRestaurants, getRestaurantById, searchRestaurants, getRestaurantsByCategory, 
+    getRestaurantRecommendations, createRestaurant, addPromotion, editPromotion, deletePromotion, deleteRestaurant };

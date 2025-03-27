@@ -1,15 +1,31 @@
 import RestaurantCard from "../components/RestaurantCard";
 import Footer from "../components/shared/Footer";
 import Navbar from "../components/shared/Navbar";
-import RestaurantImg from '../assets/restaurant2.png'
 import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { axiosInstance } from "../lib/axios";
 
 const Search = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const searchParams = new URLSearchParams(location.search);
     const searchQuery = searchParams.get('q');
-    console.log(searchQuery);
+    
+    const [searchResults, setSearchResults] = useState([]);
+
+    const fetchSearchResults = async () => {
+        try {
+            const { data } = await axiosInstance.get(`/restaurant/search?query=${searchQuery}`);
+            console.log(data);
+            setSearchResults(data);
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    useEffect(() => {
+        fetchSearchResults();
+    }, [searchQuery])
 
     return ( 
         <>
@@ -73,7 +89,7 @@ const Search = () => {
 
                 <div className="col-span-2 md:col-span-3 mt-5">
                     <div className=" flex justify-between">
-                        <p className=" text-2xl md:text-3xl font-medium">Search results for 'colombo'</p>
+                        <p className=" text-2xl md:text-3xl font-medium">Search results for '{searchQuery}'</p>
                         <div>
                             <select name="sort" id="" className=" p-1 border border-zinc-400 rounded-lg">
                                 <option value="">Sort by</option>
@@ -84,18 +100,20 @@ const Search = () => {
                     </div>
 
                     <div className="mt-10">
-                        {Array(4).fill(0).map((_, index) => (
-                            <a href={`/restaurant?id=${index}`} key={index}>
+                        {searchResults.length > 0 ? searchResults.map((result, index) => (
+                            <a href={`/restaurant?id=${result?.restaurant?._id}`} key={index}>
                                 <RestaurantCard
-                                    restaurant='King of the Mambo'
-                                    rating={Math.floor(Math.random() * 6)}
-                                    reviewsCount={420}
-                                    categories={['Sea Food', 'Wine Bars', 'Indian']}
-                                    image={RestaurantImg}
-                                    review='Lorem ipsum dolor sit amet consectetur adipisicing elit. A itaque incidunt nulla dolor dignissimos provident debitis mollitia eius cumque consectetur!'
+                                    restaurant={result?.restaurant?.name}
+                                    rating={result?.restaurant?.rating}
+                                    reviewsCount={result?.review?.reviews?.length}
+                                    categories={result?.restaurant?.category}
+                                    image={result?.restaurant?.thumbnail}
+                                    review={result?.review?.reviews[0]?.review}
                                 />
                             </a>
-                        ))}
+                        )) : (
+                            <p>We couldn't find any restaurants for your match!</p>
+                        )}
                     </div>
                 </div>
             </div>

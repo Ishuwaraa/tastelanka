@@ -17,7 +17,7 @@ const RestaurantCard = ({ restaurant, reviewsCount, rating, categories, review, 
                         <Rating rating={rating} />                 
                         {/* <img src={HalfRating} alt='1star' /> */}
                     </div>
-                    <div className=" text-sm font-medium">{reviewsCount} reviews</div>
+                    <div className=" text-sm font-medium">{reviewsCount ? `${reviewsCount} reviews` : ""}</div>
                 </div>
                 <div className='flex gap-2 mb-4'>
                     {categories.map((category, index) => (
@@ -25,7 +25,7 @@ const RestaurantCard = ({ restaurant, reviewsCount, rating, categories, review, 
                     ))}
                 </div>
                 <div>
-                    <p className=' line-clamp-2'>"{review}"</p>
+                    <p className=' line-clamp-2'>{review ? `"${review}"` : "This restaurant doesn't have any reviews yet!"}</p>
                 </div>
             </div>
         </div>

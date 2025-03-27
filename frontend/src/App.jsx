@@ -11,6 +11,7 @@ import { useAuthStore } from './store/useAuthStore';
 import { useEffect } from 'react';
 import SignUp from './pages/Signup';
 import { Toaster } from "react-hot-toast";
+import Category from './pages/Category';
 
 function App() {
   const { authUser, isCheckingAuth, checkAuth } = useAuthStore();  
@@ -30,6 +31,7 @@ function App() {
         <Route path='/login' element={!authUser? <Login /> : <Navigate to='/' />} />
         <Route path='/signup' element={!authUser? <SignUp /> : <Navigate to='/' />} />
         <Route path='/search' element={<Search />} />
+        <Route path='/category' element={<Category />} />
         <Route path='/recommendation' element={<Recommendations />} />
         <Route path='/restaurant' element={<Restaurant />} />
         <Route path='/profile'>

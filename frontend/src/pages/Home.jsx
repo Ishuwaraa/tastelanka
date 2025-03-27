@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { axiosInstance } from "../lib/axios";
 
 
-const categories = ['Sri Lankan Authentic', 'Vegetarian', 'HALAL Certified', 'Fast Food', 'Chinese', 'Indian']
+const categories = ['Sri Lankan Authentic', 'cat1', 'HALAL Certified', 'Fast Food', 'Chinese', 'Indian']
 
 const Home = () => {
     const [topRestaurants, setTopRestaurants] = useState([]);
@@ -99,7 +99,9 @@ const Home = () => {
                     <div className="flex justify-center">
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
                             {Array(6).fill(0).map((_, index) => (
-                                <CategoryCard key={index} category={categories[index]} image={index+1}/>
+                                <a href={`/category?q=${categories[index]}`} key={index}>
+                                    <CategoryCard category={categories[index]} image={index+1}/>
+                                </a>
                             ))}
                         </div>
                     </div>

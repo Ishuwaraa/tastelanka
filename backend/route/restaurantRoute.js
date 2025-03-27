@@ -5,6 +5,8 @@ const { upload, singleUpload } = require('../middleware/awsMiddleware');
 const { verifyJwt } = require('../middleware/authMiddleware');
 
 router.get('/recommend', restaurants.getRestaurantRecommendations);
+router.get('/search', restaurants.searchRestaurants);
+router.get('/search/category', restaurants.getRestaurantsByCategory);
 router.get('/', restaurants.getAllRestaurants);
 router.get('/:id', restaurants.getRestaurantById);
 router.post('/', verifyJwt, upload, restaurants.createRestaurant);
