@@ -158,6 +158,7 @@ const Restaurant = () => {
                                 <div className="space-y-4 md:w-3/4 h-80 overflow-y-scroll">
                                     {restaurantDetails?.promotions?.map((promotion) => (
                                         <PromotionsCard 
+                                            editable={false}
                                             key={promotion._id}
                                             thumbnail={promotion?.thumbnail}
                                             title={promotion?.title}

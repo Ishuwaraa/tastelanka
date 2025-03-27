@@ -11,10 +11,15 @@ import PreviewImagesModal from '../components/PreviewImagesModal';
 import PromotionsCard from '../components/PromotionsCard';
 import { axiosInstance } from '../lib/axios';
 import OwnerReviewCard from '../components/OwnerReviewCard';
+import PromotionModal from '../components/PromotionModal';
 
 const MyRestaurant = () => {    
     const [openAllPhotos, setOpenAllPhotos] = useState(false);
     const [openMenu, setOpenMenu] = useState(false);
+    const [openPromotionModal, setOpenPromotionModal] = useState(false);
+
+    const handleOpenPromotion = () => setOpenPromotionModal(true);
+    const handleClosePromotion = () => setOpenPromotionModal(false);
 
     const handleOpenAllPics = () => setOpenAllPhotos(true);
     const handleCloseAllPics = () => setOpenAllPhotos(false); 
@@ -124,25 +129,32 @@ const MyRestaurant = () => {
                             <div>
                                 <div className="flex gap-5 mb-3">
                                     <h2 className="text-xl font-semibold mb-4">Your Current Promotions</h2>
-                                    <button className="border border-primary text-primary px-2 py-1 rounded-md">Add Promotions</button>
+                                    {/* <button className="border border-primary text-primary px-2 py-1 rounded-md" onClick={handleOpenPromotion}>Add Promotions</button> */}
                                 </div>
+                                <PromotionModal open={openPromotionModal} handleClose={handleClosePromotion} restaurantId={restaurantDetails?._id}/>
                                 
                                 {/* Promotion Cards */}
                                 <div className="space-y-4 md:w-3/4 h-80 overflow-y-scroll">                                
                                     {restaurantDetails?.promotions?.map((promotion) => (
                                         <PromotionsCard 
+                                            restaurantId={restaurantDetails?._id}
+                                            promotionId={promotion._id}
+                                            editable={true}
                                             key={promotion._id}
                                             thumbnail={promotion?.thumbnail}
                                             title={promotion?.title}
                                             description={promotion?.description}
                                         />
                                     ))}
-                                </div>                            
+                                </div> 
+                                <div className='mt-3'>
+                                    <button className="border border-primary text-primary px-2 py-1 rounded-md" onClick={handleOpenPromotion}>Add a new Promotion</button>                                                              
+                                </div> 
                             </div>
                         }
 
                         {/* Reviews */}
-                        <div className="space-y-8 mt-10 w-3/4">
+                        <div className="space-y-8 mt-20 w-3/4">
                             {reviews?.length > 0 ? reviews.map((review) => {
                                 const date = review.createdAt;
                                 const formatted = new Date(date);
