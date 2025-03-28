@@ -122,6 +122,25 @@ const addReview = async (req, res) => {
         });
         const updateDoc = await reviewDoc.save();
 
+        const reviewsArray = updateDoc? updateDoc.reviews : [];        
+        await Promise.all(reviewsArray.map(async (review) => {
+            review.images = await getArrayOfImageUrls(review.images, 3600);
+        }))
+
+        if (updateDoc.reviews.length > 0) {
+            const reviewRatings = updateDoc.reviews;
+            let wholeRate = 0;
+
+            reviewRatings.forEach((review) => {
+                wholeRate += review.rating
+            })
+
+            const finalRate = wholeRate / reviewRatings.length;
+            await Restaurant.findByIdAndUpdate(restaurantId, {
+                rating: Math.round(finalRate)
+            });
+        }
+
         res.status(200).json(updateDoc);
     } catch (err) {
         res.status(500).json({ msg: err.message });

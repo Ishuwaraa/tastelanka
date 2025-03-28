@@ -18,6 +18,7 @@ import ChatWidget from '../components/ChatWidget';
 import { useLocation } from 'react-router-dom';
 import { axiosInstance } from '../lib/axios';
 import { useAuthStore } from '../store/useAuthStore';
+import ReviewForm from '../components/ReviewForm';
 
 const Restaurant = () => {
     const location = useLocation();
@@ -227,44 +228,8 @@ const Restaurant = () => {
                     
                         {/* Add Review Form */}
                         <div className="mt-10 border rounded-lg p-6">
-                            <div className="flex gap-1 mb-4">
-                                <Rating rating={2} />
-                            </div>
-
-                            <textarea placeholder="Your review here" className="w-full h-32 p-3 border rounded-lg mb-4 resize-none"/>
-
-                            <div className="mb-4">
-                                <p className="mb-2">Add your images</p>
-                                <div className="flex gap-4">
-                                    {images.map((image, index) => (
-                                        <div key={index} className="relative w-16 h-16 border rounded-lg bg-gray-200 bg-opacity-30">
-                                            {image && <img src={image} alt="" className="w-full h-full rounded-xl object-fill" />}
-                                            <div className=" absolute inset-0 flex items-center justify-center">
-                                                {!image && (
-                                                    <>
-                                                    <input
-                                                        type="file"
-                                                        accept=".png, .jpg, .jpeg"
-                                                        name={`photo${index + 1}`}
-                                                        // ref={el => fileInputRefs.current[index] = el}
-                                                        // onChange={(e) => handleChange(e, index)}
-                                                        className="hidden"
-                                                    />
-                                                    <img src={PlusIcon} alt="add image" 
-                                                        // onClick={() => handleIconClick(index)} 
-                                                        className=" text-primary hover:cursor-pointer"/>
-                                                    </>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))} 
-                                </div>
-                            </div>
-
-                            <button className="w-full bg-primary text-white py-3 rounded-lg">
-                                Add your review
-                            </button>
-                        </div>
+                            <ReviewForm restaurantId={restaurantDetails._id} setReviews={setReviews} />
+                        </div>                        
 
                         {/* <div className=" hidden md:block md:col-span-2"></div> */}
 
