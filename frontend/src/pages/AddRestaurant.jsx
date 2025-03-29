@@ -6,6 +6,7 @@ import Footer from '../components/shared/Footer';
 import { axiosInstance } from '../lib/axios';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import {AdvancedMarker, APIProvider, Map} from '@vis.gl/react-google-maps';
 
 const AddRestaurant = () => {  
     const { authUser } = useAuthStore();
@@ -15,6 +16,8 @@ const AddRestaurant = () => {
     const [location, setLocation] = useState('');
     const [contactNumber, setContactNumber] = useState('');
     const [websiteURL, setWebsiteURL] = useState('');
+    const [lat, setLat] = useState(null);
+    const [long, setLong] = useState(null);
     
     const [categories, setCategories] = useState({
         'Sri Lankan Authentic': false,
@@ -71,13 +74,21 @@ const AddRestaurant = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (title === '' || location === '' || contactNumber === '') {
+            toast.error('Please add your restaurant name, location, and contact number')
+            return;
+        }else if(lat === null || long === null) {
+            toast.error('Please add your location on the map');
+            return;
+        }
+
         const formData = new FormData();
         formData.append('name', title);
         formData.append('contact', contactNumber);
         formData.append('webUrl', websiteURL);
         formData.append('location', location);
-        formData.append('latitude', '');
-        formData.append('longitude', '');
+        formData.append('latitude', lat);
+        formData.append('longitude', long);
         Object.keys(categories).filter(cat => categories[cat]).forEach(category => formData.append('category[]', category));
         formData.append('openHours', JSON.stringify(openHours))
 
@@ -114,6 +125,49 @@ const AddRestaurant = () => {
             console.log(err.message);
         }
     };
+
+    //map variables    
+    const [disableBtn, setDisableBtn] = useState(false);
+    const defaultPosition = {lat: 6.884504262718018, lng: 79.91861383804526};    
+    const [clickedPosition, setClickedPosition] = useState(null);
+
+    const handleMapClick = (event) => {
+        console.log('Map clicked', event);
+        setClickedPosition(event.detail.latLng);
+        const lat = event.detail.latLng.lat;
+        const lng = event.detail.latLng.lng;
+        setLat(lat);
+        setLong(lng);
+    }
+
+    const handleLocateMe = (e) => {
+        e.preventDefault();
+
+        if(navigator.geolocation){
+            setDisableBtn(true);
+            navigator.geolocation.getCurrentPosition((position) => {
+                const userPosition = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
+                setClickedPosition(userPosition);
+                setLat(position.coords.latitude);
+                setLong(position.coords.longitude);
+                setTimeout(() => {
+                    setDisableBtn(false);
+                }, 5000);
+            }, (error) => {
+                setTimeout(() => {
+                    setDisableBtn(false);
+                }, 5000);
+                if (error.code === error.PERMISSION_DENIED) {
+                    alert('Location access is required to find your position. Please enable location access.');
+                } else {
+                    console.log('Error getting user location:', error);
+                }
+            });
+        } else toast.error('Geo location not supported on this device');
+    }
 
     return (
         <>
@@ -287,9 +341,19 @@ const AddRestaurant = () => {
         <div className="border rounded p-4">
             <div className="flex justify-between">
                 <h3 className="text-lg font-semibold mb-4">Pin Your Restaurant Location</h3>
-                <button className='border border-primary text-primary px-2 rounded'>Locate Me</button>
+                <button 
+                    className='border border-primary text-primary px-2 rounded'  
+                    disabled = {disableBtn? true : false}
+                    onClick={(e) => handleLocateMe(e)}
+                >{disableBtn? 'locating...' : 'Locate Me'}</button>
             </div>
-            <div className='mt-3'>map here</div>
+            <div className='mt-3 w-full h-96'>
+                <APIProvider apiKey={import.meta.env.VITE_MAP_KEY}>
+                    <Map defaultCenter={defaultPosition} defaultZoom={10} mapId={import.meta.env.VITE_MAP_ID} onClick={handleMapClick}>
+                        {clickedPosition && <AdvancedMarker position={clickedPosition} />}
+                    </Map>
+                </APIProvider>
+            </div>
         </div>
         
         <div className="group relative w-full">            

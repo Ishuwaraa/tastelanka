@@ -8,7 +8,6 @@ import Globe from '../assets/globe.png';
 import Phone from '../assets/phone-call.png';
 import ShareIcon from '../assets/share.png';
 import Rating from "../components/shared/Rating";
-import PlusIcon from '../assets/plus.png';
 import ReviewCard from "../components/ReviewCard";
 import MapImg from '../assets/map.png';
 import { useState } from "react";
@@ -19,6 +18,7 @@ import { useLocation } from 'react-router-dom';
 import { axiosInstance } from '../lib/axios';
 import { useAuthStore } from '../store/useAuthStore';
 import ReviewForm from '../components/ReviewForm';
+import { APIProvider, Map, AdvancedMarker } from '@vis.gl/react-google-maps';
 
 const Restaurant = () => {
     const location = useLocation();
@@ -38,6 +38,9 @@ const Restaurant = () => {
     const [restaurantDetails, setRestaurantDetails] = useState({});
     const [reviews, setReviews] = useState([]);
     const [allPhotos, setAllPhotos] = useState([]);
+    const [lat, setLat] = useState(null);
+    const [long, setLong] = useState(null);
+    const position = (lat === null || long === null) ? {lat: 6.884504262718018, lng: 79.91861383804526} : {lat: lat, lng: long};
 
     const fetchRestaurantDetails = async () => {
         try {
@@ -47,6 +50,8 @@ const Restaurant = () => {
             console.log(reviewRes.data);
             setRestaurantDetails(data);
             setReviews(reviewRes.data?.reviews);
+            setLat(data?.latitude);
+            setLong(data?.longitude);
 
             const menuImages = data?.menu || [];
             const restaurantImages = data?.images || [];
@@ -250,8 +255,12 @@ const Restaurant = () => {
                         {/* Location div */}
                         <div className="mt-10 border rounded-lg p-6">
                             <h2 className="text-xl font-semibold mb-4">Location</h2>
-                            <div className="w-full overflow-hidden">
-                                <img src={MapImg} alt="location" />
+                            <div className="w-full h-96 overflow-hidden">
+                            <APIProvider apiKey={import.meta.env.VITE_MAP_KEY}>
+                                <Map defaultCenter={position} defaultZoom={12} mapId={import.meta.env.VITE_MAP_ID}>
+                                    <AdvancedMarker position={position} />
+                                </Map>
+                            </APIProvider>
                             </div>
                         </div>
                     </div>
