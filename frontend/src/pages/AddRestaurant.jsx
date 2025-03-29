@@ -3,9 +3,14 @@ import Camera from "../assets/camera-icon.png";
 import Navbar from '../components/shared/Navbar';
 import { useAuthStore } from '../store/useAuthStore';
 import Footer from '../components/shared/Footer';
+import { axiosInstance } from '../lib/axios';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const AddRestaurant = () => {  
     const { authUser } = useAuthStore();
+    const navigate = useNavigate();
+
     const [title, setTitle] = useState('');
     const [location, setLocation] = useState('');
     const [contactNumber, setContactNumber] = useState('');
@@ -19,20 +24,17 @@ const AddRestaurant = () => {
         'Chinese': false,
         'Indian': false
     });
-
-    // Open hours state
+    
     const [openHours, setOpenHours] = useState({
         weekdays: { startTime: '', endTime: '' },
         saturday: { startTime: '', endTime: '' },
         sunday: { startTime: '', endTime: '' }
     });
-
-    // Image upload states
+    
     const [thumbnail, setThumbnail] = useState([]);
     const [menuImages, setMenuImages] = useState([]);
     const [additionalImages, setAdditionalImages] = useState([]);
-
-    // Image upload handler (generic)
+    
     const handleImageUpload = (setter, maxImages) => (event) => {
         const files = Array.from(event.target.files);
         const newImages = files.map(file => ({
@@ -42,23 +44,20 @@ const AddRestaurant = () => {
 
         setter(prevImages => [...prevImages, ...newImages].slice(0, maxImages));
     };
-
-    // Remove image handler (generic)
+    
     const removeImage = (setter) => (indexToRemove) => {
         setter(prevImages => 
         prevImages.filter((_, index) => index !== indexToRemove)
         );
     };
-
-    // Category toggle handler
+    
     const toggleCategory = (category) => {
         setCategories(prev => ({
         ...prev,
         [category]: !prev[category]
         }));
     };
-
-    // Open hours change handler
+    
     const handleOpenHoursChange = (day, field) => (e) => {
         setOpenHours(prev => ({
         ...prev,
@@ -69,67 +68,69 @@ const AddRestaurant = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Implement submission logic
-        console.log({
-        title,
-        location,
-        contactNumber,
-        websiteURL,
-        categories: Object.keys(categories).filter(cat => categories[cat]),
-        openHours,
-        thumbnail,
-        menuImages,
-        additionalImages
+
+        const formData = new FormData();
+        formData.append('name', title);
+        formData.append('contact', contactNumber);
+        formData.append('webUrl', websiteURL);
+        formData.append('location', location);
+        formData.append('latitude', '');
+        formData.append('longitude', '');
+        Object.keys(categories).filter(cat => categories[cat]).forEach(category => formData.append('category[]', category));
+        formData.append('openHours', JSON.stringify(openHours))
+
+        if (thumbnail.length > 0) {
+            formData.append('thumbnail', thumbnail[0].file);
+        }
+        menuImages.forEach((image) => {
+            formData.append('menuPhotos', image.file);
         });
+        additionalImages.forEach((image) => {
+            formData.append('restaurantPhotos', image.file);
+        });
+
+
+        try {
+            const { data } = await axiosInstance.post('restaurant/', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+            toast.success('Your restaurant added successfullly');
+            setTitle('');
+            setLocation('');
+            setContactNumber('');
+            setWebsiteURL('');
+            setCategories({});
+            setOpenHours({});
+            setThumbnail([]);
+            setMenuImages([]);
+            setAdditionalImages([]);
+            console.log(data);
+            navigate('/profile');
+        } catch (err) {
+            console.log(err.message);
+        }
     };
 
     return (
         <>
         <Navbar />
         <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-6 space-y-6 mt-20">
-        <div className="grid grid-cols-2 gap-4">
-            {/* Title */}
-            <input 
-            type="text"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="border rounded p-2"
-            />
-            
-            {/* Location */}
-            <input 
-            type="text"
-            placeholder="Location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="border rounded p-2"
-            />
+        <div className="grid grid-cols-2 gap-4">            
+            <input type="text" placeholder="Title" value={title} required onChange={(e) => setTitle(e.target.value)} className="border rounded p-2"/>
+                        
+            <input type="text" placeholder="Location" value={location} required onChange={(e) => setLocation(e.target.value)} className="border rounded p-2"/>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-            {/* Contact Number */}
-            <input 
-            type="text"
-            placeholder="Contact Number"
-            value={contactNumber}
-            onChange={(e) => setContactNumber(e.target.value)}
-            className="border rounded p-2"
-            />
-            
-            {/* Website URL */}
-            <input 
-            type="text"
-            placeholder="Website URL"
-            value={websiteURL}
-            onChange={(e) => setWebsiteURL(e.target.value)}
-            className="border rounded p-2"
-            />
+        <div className="grid grid-cols-2 gap-4">            
+            <input type="text" placeholder="Contact Number" value={contactNumber} required onChange={(e) => setContactNumber(e.target.value)} className="border rounded p-2"/>
+                        
+            <input type="text" placeholder="Website URL" value={websiteURL} onChange={(e) => setWebsiteURL(e.target.value)} className="border rounded p-2"/>
         </div>
-
-        {/* Categories */}
+        
         <div className="border rounded p-4">
             <h3 className="text-lg font-semibold mb-4">Categories</h3>
             <div className="grid grid-cols-3 gap-2">
@@ -239,6 +240,7 @@ const AddRestaurant = () => {
                     accept="image/*"
                     className="hidden"
                     onChange={handleImageUpload(setMenuImages, 2)}
+                    multiple
                 />
                 <img src={Camera} alt='camera' className='w-6 h-6'/>  
                 </label>
@@ -282,7 +284,14 @@ const AddRestaurant = () => {
             </div>
         </div>
 
-        {/* Submit Button */}
+        <div className="border rounded p-4">
+            <div className="flex justify-between">
+                <h3 className="text-lg font-semibold mb-4">Pin Your Restaurant Location</h3>
+                <button className='border border-primary text-primary px-2 rounded'>Locate Me</button>
+            </div>
+            <div className='mt-3'>map here</div>
+        </div>
+        
         <div className="group relative w-full">            
             <button 
                 onClick={(e) => handleSubmit(e)}

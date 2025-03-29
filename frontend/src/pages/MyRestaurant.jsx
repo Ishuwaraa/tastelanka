@@ -48,6 +48,24 @@ const MyRestaurant = () => {
         }
     }
 
+    const getFormattedTime = (time) => {
+        if (!time) return "";
+        const [hours, minutes] = time.split(":").map(Number);
+        const period = hours >= 12 ? "PM" : "AM";
+        const formattedHours = hours % 12 || 12; // Convert 24-hour format to 12-hour format
+        return `${formattedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
+    };
+
+    const getTodaysHours = (openHours) => {
+        if (!openHours) return null;
+    
+        const daysMap = ["sunday", "weekdays", "weekdays", "weekdays", "weekdays", "weekdays", "saturday"];
+        const today = new Date().getDay(); // 0 = Sunday, 6 = Saturday
+        return openHours[daysMap[today]];
+    };
+    
+    const todayHours = getTodaysHours(restaurantDetails?.openHours);
+
     useEffect(() => {
         fetchRestaurantData();
     }, []);
@@ -75,8 +93,14 @@ const MyRestaurant = () => {
                         {/* Category and Hours */}
                         <div className="flex flex-col gap-1">
                             <p className="text-sm">Bakeries, Cafes, Coffee & Tea</p>
-                            <p className="text-sm">
-                                <span className="text-green-400">Open</span> 8:00 AM - 2:00 PM
+                            <p className="text-sm">                                
+                                {todayHours ? (
+                                    <>
+                                        <span className="text-green-400">Open</span> {getFormattedTime(todayHours.startTime)} - {getFormattedTime(todayHours.endTime)}
+                                    </>
+                                ) : (
+                                    <span className="text-red-400">Closed</span>
+                                )}
                             </p>
                         </div>
                         

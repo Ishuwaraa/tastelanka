@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { axiosInstance } from "../lib/axios";
 
 
-const categories = ['Sri Lankan Authentic', 'cat1', 'HALAL Certified', 'Fast Food', 'Chinese', 'Indian']
+const categories = ['Sri Lankan Authentic', 'Vegetarian', 'HALAL Certified', 'Fast Food', 'Chinese', 'Indian']
 
 const Home = () => {
     const [topRestaurants, setTopRestaurants] = useState([]);

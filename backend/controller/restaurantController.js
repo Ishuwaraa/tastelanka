@@ -194,7 +194,8 @@ const createRestaurant = async (req, res) => {
             images: imageFilenames,
             promotions: [],
             priceRange: [],
-            embedding: description           
+            embedding: description,
+            openHours: JSON.parse(data.openHours)
         });
         if (!restaurant) return res.status(500).json({ msg: 'Error creating the restaurant' });
 

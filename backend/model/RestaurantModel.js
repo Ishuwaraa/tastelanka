@@ -1,6 +1,15 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const openHoursSchema = new Schema({
+    startTime: {
+        type: String
+    },
+    endTime: {
+        type: String
+    }
+});
+
 const restaurantSchema = new Schema({
     name: {
         type: String,
@@ -58,6 +67,17 @@ const restaurantSchema = new Schema({
     embedding: {
         type: String,
         required: true
+    },
+    openHours: {
+        saturday: {
+            type: openHoursSchema
+        },
+        sunday: {
+            type: openHoursSchema
+        },
+        weekdays: {
+            type: openHoursSchema
+        }
     }
 }, { timestamps: true });
 
