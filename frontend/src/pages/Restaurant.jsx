@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import Footer from "../components/shared/Footer";
 import Navbar from "../components/shared/Navbar";
-import RestaurantThumbnail from '../assets/restaurant.png';
 import BookMark from '../assets/bookmark.png';
 import Compass from '../assets/compass.png';
 import Globe from '../assets/globe.png';
@@ -9,7 +8,6 @@ import Phone from '../assets/phone-call.png';
 import ShareIcon from '../assets/share.png';
 import Rating from "../components/shared/Rating";
 import ReviewCard from "../components/ReviewCard";
-import MapImg from '../assets/map.png';
 import { useState } from "react";
 import PreviewImagesModal from '../components/PreviewImagesModal';
 import PromotionsCard from '../components/PromotionsCard';

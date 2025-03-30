@@ -149,6 +149,51 @@ const getRestaurantRecommendations = async (req, res) => {
     }
 }
 
+const getNearbyRestaurantsGeoSpatial = async (req, res) => {
+    try {
+        const { latitude, longitude, radius = 5 } = req.query; // radius in km. default 5km
+        
+        //convert coordinates to numbers
+        const lat = parseFloat(latitude);
+        const lng = parseFloat(longitude);
+        
+        // Validate coordinates
+        if (isNaN(lat) || isNaN(lng)) return res.status(400).json({ msg: 'Invalid coordinates provided' });      
+        
+        // Find restaurants within the radius
+        // For this to work, you need to add a 2dsphere index to your Restaurant schema
+        // and convert your coordinates to GeoJSON format
+        const restaurants = await Restaurant.find({
+            geoLocation: {
+                $near: {
+                    $geometry: {
+                        type: "Point",
+                        coordinates: [lng, lat] // GeoJSON uses [longitude, latitude] order
+                    },
+                    $maxDistance: radius * 1000 // Convert km to meters
+                }
+            }
+        });
+
+        const restaurantDoc = []
+
+        await Promise.all(
+            restaurants.map(async (restaurant) => {
+                if (restaurant.thumbnail !== null) {
+                    restaurant.thumbnail = await getImageUrl(restaurant.thumbnail, 3600);
+                }                
+                const review = await Review.findById(restaurant._id)
+                restaurantDoc.push({ restaurant, review });
+            })
+        );  
+  
+        return res.status(200).json(restaurantDoc);
+        
+    } catch (err) {
+        return res.status(500).json({ msg: err.message });
+    }
+};
+
 const generateDescription = (restaurant) => {
     //Known for ${restaurant.menu.slice(0, 3).join(", ")}.
     //${restaurant?.promotions?.length > 0 ? "Special promotions include " + restaurant.promotions.map(p => p.title).join(", ") + "." : ""}
@@ -195,13 +240,17 @@ const createRestaurant = async (req, res) => {
             promotions: [],
             priceRange: [],
             embedding: description,
-            openHours: JSON.parse(data.openHours)
+            openHours: JSON.parse(data.openHours),
+            geoLocation: {
+                type: 'Point',
+                coordinates: [data.longitude, data.latitude]
+            }
         });
         if (!restaurant) return res.status(500).json({ msg: 'Error creating the restaurant' });
 
         const user = await User.findByIdAndUpdate(userId, {
             restaurant: restaurant._id,
-            role: 'owner'
+            role: 'customer'
         }, { new: true })
         if (!user) return res.status(500).json({ msg: 'Restaurant created. Error updating user' });  
         
@@ -347,4 +396,4 @@ const deleteRestaurant = async (req, res) => {
 }
 
 module.exports = { getAllRestaurants, getRestaurantById, searchRestaurants, getRestaurantsByCategory, 
-    getRestaurantRecommendations, createRestaurant, addPromotion, editPromotion, deletePromotion, deleteRestaurant };
+    getRestaurantRecommendations, getNearbyRestaurantsGeoSpatial, createRestaurant, addPromotion, editPromotion, deletePromotion, deleteRestaurant };

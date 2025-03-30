@@ -13,6 +13,7 @@ import SignUp from './pages/Signup';
 import { Toaster } from "react-hot-toast";
 import Category from './pages/Category';
 import AddRestaurant from './pages/AddRestaurant';
+import NearbyRestaurants from './pages/NearbyRestaurants';
 
 function App() {
   const { authUser, isCheckingAuth, checkAuth } = useAuthStore();  
@@ -35,6 +36,7 @@ function App() {
         <Route path='/category' element={<Category />} />
         <Route path='/recommendation' element={<Recommendations />} />
         <Route path='/restaurant' element={<Restaurant />} />
+        <Route path='/nearby' element={<NearbyRestaurants />} />
         <Route path='/add-restaurant' element={authUser?.role !== 'owner' ? <AddRestaurant /> : <Navigate to='/' />} />
         <Route path='/profile'>
           <Route index element={authUser? <Profile /> : <Navigate to='/login' />} />

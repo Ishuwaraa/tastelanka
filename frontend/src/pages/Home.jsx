@@ -82,7 +82,7 @@ const Home = () => {
                     <div className="md:col-span-2 flex flex-col justify-center">
                         <p className=" text-2xl md:text-3xl font-semibold mb-2">Craving a Quick Bite?</p>
                         <p className=" text-xl md:text-lg font-medium text-gray-600 mb-4">Explore local favourites and uncover hidden gems nearby. Find the best Sri Lankan flovors just around the corner!</p>
-                        <div className="btn2" role="button">
+                        <div className="btn2" role="button" onClick={() => window.location.href = '/nearby'}>
                             <p>Discover</p>
                             <img src={ArrowRight} alt="go" className="w-5" />
                         </div>
