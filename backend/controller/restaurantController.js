@@ -159,18 +159,17 @@ const getNearbyRestaurantsGeoSpatial = async (req, res) => {
         
         // Validate coordinates
         if (isNaN(lat) || isNaN(lng)) return res.status(400).json({ msg: 'Invalid coordinates provided' });      
-        
-        // Find restaurants within the radius
-        // For this to work, you need to add a 2dsphere index to your Restaurant schema
-        // and convert your coordinates to GeoJSON format
+                
+        //for this to work, need to add a 2dsphere index. didn't work the code to automatically create. manually create the index
+        //convert coordinates to GeoJSON format
         const restaurants = await Restaurant.find({
             geoLocation: {
                 $near: {
                     $geometry: {
                         type: "Point",
-                        coordinates: [lng, lat] // GeoJSON uses [longitude, latitude] order
+                        coordinates: [lng, lat] 
                     },
-                    $maxDistance: radius * 1000 // Convert km to meters
+                    $maxDistance: radius * 1000 //convert km to meters
                 }
             }
         });
