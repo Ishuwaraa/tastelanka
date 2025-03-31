@@ -30,7 +30,8 @@ const Login = () => {
                 <input type="password" placeholder="password" onChange={(e) => setPassword(e.target.value)}/>
                 <button>log in</button>
             </form>
-            <a href="/signup">create account</a>
+            <a href="/signup">create account</a><br />
+            <a href="/forgot-pass">forgot password? Reset here</a>
         </div>
      );
 }

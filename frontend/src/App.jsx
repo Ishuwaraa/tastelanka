@@ -14,6 +14,8 @@ import { Toaster } from "react-hot-toast";
 import Category from './pages/Category';
 import AddRestaurant from './pages/AddRestaurant';
 import NearbyRestaurants from './pages/NearbyRestaurants';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   const { authUser, isCheckingAuth, checkAuth } = useAuthStore();  
@@ -32,6 +34,8 @@ function App() {
         <Route index element={<Home />} />
         <Route path='/login' element={!authUser? <Login /> : <Navigate to='/' />} />
         <Route path='/signup' element={!authUser? <SignUp /> : <Navigate to='/' />} />
+        <Route path='/reset-password' element={<ResetPassword />} />
+        <Route path='/forgot-pass' element={<ForgotPassword />} />
         <Route path='/search' element={<Search />} />
         <Route path='/category' element={<Category />} />
         <Route path='/recommendation' element={<Recommendations />} />
