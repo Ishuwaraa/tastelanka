@@ -255,7 +255,7 @@ const Restaurant = () => {
                             <h2 className="text-xl font-semibold mb-4">Location</h2>
                             <div className="w-full h-96 overflow-hidden">
                             <APIProvider apiKey={import.meta.env.VITE_MAP_KEY}>
-                                <Map defaultCenter={position} defaultZoom={12} mapId={import.meta.env.VITE_MAP_ID}>
+                                <Map defaultCenter={position} defaultZoom={12} mapId={import.meta.env.VITE_MAP_ID} center={position}>
                                     <AdvancedMarker position={position} />
                                 </Map>
                             </APIProvider>

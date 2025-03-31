@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AdvancedMarker, APIProvider, Map } from '@vis.gl/react-google-maps';
+import { AdvancedMarker, APIProvider, Map, InfoWindow } from '@vis.gl/react-google-maps';
 import { axiosInstance } from '../lib/axios';
 import Navbar from '../components/shared/Navbar';
 import Footer from '../components/shared/Footer';
@@ -10,6 +10,7 @@ const NearbyRestaurants = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [radius, setRadius] = useState(5); // Default radius in kilometers
+    const [selectedRestaurant, setSelectedRestaurant] = useState(null);
     
     const defaultPosition = {lat: 6.884504262718018, lng: 79.91861383804526}
         
@@ -119,7 +120,7 @@ const NearbyRestaurants = () => {
                         defaultCenter={defaultPosition} 
                         defaultZoom={12} 
                         mapId={import.meta.env.VITE_MAP_ID}
-                        center={userPosition || defaultPosition}
+                        // center={userPosition || defaultPosition} //has a fixed position cuz of this
                     >
                         {/* User's position marker */}
                         {userPosition && (
@@ -143,6 +144,7 @@ const NearbyRestaurants = () => {
                                 key={result?.restaurant?._id}
                                 position={{ lat: result?.restaurant?.latitude, lng: result?.restaurant?.longitude }}
                                 title={result?.restaurant?.name}
+                                onClick={() => setSelectedRestaurant(result?.restaurant)}
                             >
                                 <div style={{ 
                                     width: '15px', 
@@ -153,6 +155,45 @@ const NearbyRestaurants = () => {
                                 }}></div>
                             </AdvancedMarker>
                         ))}
+
+                        {selectedRestaurant && (
+                            <InfoWindow
+                                position={{ 
+                                    lat: selectedRestaurant.latitude, 
+                                    lng: selectedRestaurant.longitude 
+                                }}
+                                onCloseClick={() => setSelectedRestaurant(null)}
+                            >
+                                <div className="p-3 max-w-xs rounded-lg shadow-md bg-white">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h3 className="font-bold text-lg text-gray-800 truncate">{selectedRestaurant?.name}</h3>
+                                        <div className="flex items-center text-amber-500">
+                                            <span className="mr-1">{selectedRestaurant?.rating}</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex items-center space-x-3 mb-3">
+                                        <img 
+                                            src={selectedRestaurant?.thumbnail} 
+                                            alt={selectedRestaurant?.name} 
+                                            className="w-20 h-20 object-cover rounded-md"
+                                        />
+                                        <div className="flex-1 text-sm text-gray-600">
+                                            <p className="mb-1">{selectedRestaurant?.location}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <a href={`/restaurant?id=${selectedRestaurant?._id}`}
+                                        className="block w-full py-2 px-4 bg-primary hover:bg-red-700 text-white text-center font-medium rounded-md transition duration-200"
+                                    >
+                                        View Details
+                                    </a>
+                                </div>
+                            </InfoWindow>
+                            )}
                     </Map>
                 </APIProvider>
             </div>
