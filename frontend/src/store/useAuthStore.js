@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import { io } from 'socket.io-client';
+import toast from "react-hot-toast";
 
 const BASE_URL = 'http://localhost:4000';
 
@@ -29,7 +30,13 @@ export const useAuthStore = create((set, get) => ({
             get().connectSocket();
         } catch (err) {
             set({ authUser: null });
-            console.log(err.message)
+            console.log(err)
+
+            if (err?.response?.status === 400) {
+                toast.error('Email already exists')
+            } else {
+                navigate('/', { replace: true });
+            }
         }
     },
     logout: async () => {

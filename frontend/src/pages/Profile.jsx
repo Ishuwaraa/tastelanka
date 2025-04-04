@@ -3,6 +3,7 @@ import DummyPic from "../assets/dummy.jpg";
 import EditPen from "../assets/edit_pen.png";
 import { useEffect, useState } from "react";
 import { axiosInstance } from "../lib/axios";
+import toast from "react-hot-toast";
 
 const Profile = () => {
     const [activeForm, setActiveForm] = useState('profile');
@@ -45,7 +46,7 @@ const Profile = () => {
                 const { data } = await axiosInstance.patch('user/', { name: newName, phone: newPhone ? newPhone : phone });
                 setName(data?.name);
                 setPhone(data?.phone);                
-                alert('profile updated');
+                toast.success('profile updated');
             } catch (err) {
                 console.log(err.message);
             }
@@ -54,16 +55,16 @@ const Profile = () => {
                 try {
                     await axiosInstance.patch('user/pass', { currPass: password, newPass: newPassword });                
                     window.location.reload();
-                    alert('password updated');
+                    toast.success('password updated');
                 } catch (err) {
                     if (err?.response?.status === 400) {
-                        alert(err.response.data.msg);
+                        toast.error(err.response.data.msg);
                     } else {
                         console.log(err.message);
                     }
                 }
             } else {
-                alert('passwords do not match');
+                toast.error('passwords do not match');
             }
         } else if (type === 'delete') {
             if(window.confirm('Are you sure you want to delete this account?')){
