@@ -123,6 +123,7 @@ const getUserData = async (req, res) => {
 
         //need to generate s3 url for thumbnails
 
+        user.profilePic = await getImageUrl(user.profilePic, 3600);
         res.status(200).json({ 
             name: user.name, phone: user.phone, 
             email: user.email, profilePic: user.profilePic 
@@ -196,7 +197,31 @@ const getUserRestaurant = async (req, res) => {
     }
 }
 
+//add to user favs
+
+//get user favs
+
 //update profile pic
+const updateProfilePic = async (req, res) => {
+    const userId = req.userid;
+
+    try {
+        const user = await User.findByIdAndUpdate(userId, {
+            profilePic: req.file?.key
+        }, { new: true });
+
+        if(!user) return res.status(500).json({ msg: 'Update failed' });
+
+        user.profilePic = await getImageUrl(user.profilePic, 3600);
+        res.status(200).json({ 
+            name: user.name, phone: user.phone, 
+            email: user.email, profilePic: user.profilePic 
+        });
+    } catch (err) {
+        res.status(500).json({ msg: err.message });
+    }
+
+}
 
 //update user data
 const updateUserData = async (req, res) => {
@@ -346,4 +371,5 @@ const resetPass = async (req, res) => {
     }
 }
 
-module.exports = { cookieOptions, register, login, checkAuth, logout, getUserData, getUserRestaurant, updateUserData, updatePass, deleteAcc, forgotPass, resetPass };
+module.exports = { cookieOptions, register, login, checkAuth, logout, getUserData, getUserRestaurant, 
+    updateUserData, updatePass, updateProfilePic, deleteAcc, forgotPass, resetPass };

@@ -57,6 +57,9 @@ export const useAuthStore = create((set, get) => ({
             get().connectSocket();
         } catch (err) {
             console.log(err.message);
+            if (err?.response?.status === 401) {
+                toast.error('Invalid credentials')
+            }
         }
     },
     connectSocket: () => {

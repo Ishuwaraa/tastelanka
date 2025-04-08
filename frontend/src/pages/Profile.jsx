@@ -4,6 +4,7 @@ import EditPen from "../assets/edit_pen.png";
 import { useEffect, useState } from "react";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
+import RestaurantCard from "../components/RestaurantCard";
 
 const Profile = () => {
     const [activeForm, setActiveForm] = useState('profile');
@@ -72,6 +73,34 @@ const Profile = () => {
         }
     }
 
+    const handleFileSelectAndUpload = () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*'; 
+
+        input.onchange = async (event) => {
+            const file = event.target.files?.[0];
+
+            if (file) {
+                const formData = new FormData();
+                formData.append('file', file);
+        
+                try {
+                    const { data } = await axiosInstance.post('user/profilepic', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });                        
+                    setProfilePic(data?.profilePic);
+                    toast.success('Profile pic updated successfully!');
+                } catch (err) {
+                    console.log(err.message);
+                }
+            }
+        };
+        input.click();
+    };
+      
     useEffect(() => {
         fetchUserData();
     }, []);
@@ -85,7 +114,7 @@ const Profile = () => {
                 <div className="relative w-16 h-16">
                     <img src={profilePic ? profilePic : DummyPic} alt={name || "profile"} className="w-16 h-16 rounded-full object-cover border border-gray-200"/>
                                                             
-                    <button className="absolute -bottom-1 -right-1 bg-white p-1 rounded-full shadow-md border border-gray-200">                            
+                    <button className="absolute -bottom-1 -right-1 bg-white p-1 rounded-full shadow-md border border-gray-200" onClick={handleFileSelectAndUpload}>                            
                         <img src={EditPen} alt="edit" className="w-4 h-4" />
                     </button>
                 </div>
@@ -164,6 +193,24 @@ const Profile = () => {
                             </form>
                         }
                     </div>
+                </div>
+            </div>
+
+            <div className="mt-16">
+                <p className="text-2xl font-semibold">Your favourites</p>
+
+                <div className="w-full flex flex-col items-center mt-10">
+                    {Array(3).fill(0).map((restaurant, index) => (
+                        <a href='/' key={index} className="md:w-3/4">
+                            <RestaurantCard
+                                restaurant="title"
+                                rating={4}
+                                reviewsCount={3}
+                                categories={['cat1']}
+                                image={DummyPic}
+                            />
+                        </a>
+                    ))}
                 </div>
             </div>
         </div>
