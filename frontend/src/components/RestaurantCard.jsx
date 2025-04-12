@@ -1,6 +1,3 @@
-import FullRating from '../assets/full-rating.png'
-import HalfRating from '../assets/half-rating.png'
-import EmptyRating from '../assets/empty-rating.png'
 import Rating from './shared/Rating';
 
 const RestaurantCard = ({ restaurant, reviewsCount, rating, categories, review, image }) => {
@@ -12,7 +9,7 @@ const RestaurantCard = ({ restaurant, reviewsCount, rating, categories, review, 
 
             <div className="col col-span-2 ">
                 <p className='font-medium text-lg line-clamp-1 mb-2'>{restaurant}</p>
-                <div className='flex justify-between w-1/2 mb-2'>
+                <div className='flex justify-between mb-2'>
                     <div className=" flex items-center gap-1">
                         <Rating rating={rating} />                 
                         {/* <img src={HalfRating} alt='1star' /> */}

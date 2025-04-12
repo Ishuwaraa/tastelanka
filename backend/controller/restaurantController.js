@@ -122,7 +122,7 @@ const getRestaurantsByCategory = async (req, res) => {
 
 //get restaurant recommendations
 const getRestaurantRecommendations = async (req, res) => {
-    const { query } = req.body;
+    const { query } = req.query;
 
     try {
         if (!query) return res.status(400).json({ error: 'No search query provided' });        
@@ -141,8 +141,20 @@ const getRestaurantRecommendations = async (req, res) => {
         // const sortedRestaurants = recommendedIds.map(id => 
         //     restaurants.find(restaurant => restaurant._id.toString() === id)
         // ).filter(Boolean);
+
+        const restaurantDoc = []
+
+        await Promise.all(
+            restaurants.map(async (restaurant) => {
+                if (restaurant.thumbnail !== null) {
+                    restaurant.thumbnail = await getImageUrl(restaurant.thumbnail, 3600);
+                }                
+                const review = await Review.findById(restaurant._id)
+                restaurantDoc.push({ restaurant, review });
+            })
+        );  
         
-        res.status(200).json(restaurants);
+        res.status(200).json(restaurantDoc);
         
     } catch (err) {        
         res.status(500).json({ msg: err.message });
