@@ -63,7 +63,7 @@ const Home = () => {
                         <div className="flex justify-center">
                             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
                                 {topRestaurants.length > 0 && topRestaurants.slice(0, 3).map((restaurant, index) => (
-                                    <a href={`/restaurant?id=${restaurant._id}`} key={index}>
+                                    <a href={`/restaurant?id=${restaurant._id}&f=false`} key={index}>
                                         <TrendingRestaurantCard
                                             restaurant={restaurant?.name}
                                             thumbnail={restaurant?.thumbnail}

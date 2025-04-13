@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import Footer from "../components/shared/Footer";
 import Navbar from "../components/shared/Navbar";
 import BookMark from '../assets/bookmark.png';
+import BookMarkFilled from "../assets/bookmark-filled.png";
 import Compass from '../assets/compass.png';
 import Globe from '../assets/globe.png';
 import Phone from '../assets/phone-call.png';
@@ -17,14 +18,15 @@ import { axiosInstance } from '../lib/axios';
 import { useAuthStore } from '../store/useAuthStore';
 import ReviewForm from '../components/ReviewForm';
 import { APIProvider, Map, AdvancedMarker } from '@vis.gl/react-google-maps';
+import toast from 'react-hot-toast';
 
 const Restaurant = () => {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const restaurantId = searchParams.get('id');
+    const isFav = searchParams.get('f');
     const { authUser } = useAuthStore();
-
-    const [images , setImages] = useState(Array(4).fill(null)); //initializing array with 4 null elements
+    
     const [openAllPhotos, setOpenAllPhotos] = useState(false);
     const [openMenu, setOpenMenu] = useState(false);
 
@@ -59,6 +61,25 @@ const Restaurant = () => {
         } catch (err) {
             console.log(err.message);
         }
+    }
+
+    const toggleUserFav = async () => {
+        try {
+            if (isFav === 'false') {
+                await axiosInstance.post('user/add-fav', { restaurantId });
+                toast.success('Added to favourites');
+            } else if (isFav === 'true') {
+                await axiosInstance.post('user/remove-fav', { restaurantId });                
+                toast.success('Removed from favourites');
+            }
+
+            const url = new URL(window.location.href);
+            url.searchParams.set('f', isFav === 'true' ? 'false' : 'true');
+
+            window.history.replaceState({}, '', url);
+        } catch (err) {
+            console.log(err.message);
+        }        
     }
 
     const getFormattedTime = (time) => {
@@ -157,9 +178,20 @@ const Restaurant = () => {
                     <button className="border px-6 py-2 rounded-md flex items-center gap-2">
                         <img src={ShareIcon} alt="share" className="w-5"/> Share
                     </button>
-                    <button className="border px-6 py-2 rounded-md flex items-center gap-2">
-                        <img src={BookMark} alt="bookmark" className="w-5"/> Save
-                    </button>
+                    <div className="group relative">
+                        <button className="border px-6 py-2 rounded-md flex items-center gap-2" onClick={toggleUserFav} disabled={!authUser}>
+                            <img src={(isFav === 'true') ? BookMarkFilled : BookMark} alt="bookmark" className="w-5"/> Save
+                        </button>
+                        {!authUser && (
+                            <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 
+                                            bg-gray-800 text-white text-xs px-2 py-1 rounded 
+                                            opacity-0 group-hover:opacity-100 
+                                            transition-opacity duration-300 
+                                            pointer-events-none">
+                            You need to be logged in
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* Main Content Grid */}

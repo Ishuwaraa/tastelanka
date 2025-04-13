@@ -63,7 +63,7 @@ const Recommendations = () => {
 
                         <div className="mt-10 md:w-3/4 lg:w-1/2 flex flex-col items-center mx-auto">
                             {recommendations.length > 0 ? recommendations.map((recommendation, index) => (
-                                <a href={`/restaurant?id=${recommendation?.restaurant?._id}`} key={index}>
+                                <a href={`/restaurant?id=${recommendation?.restaurant?._id}&f=false`} key={index}>
                                     <RestaurantCard
                                         restaurant={recommendation?.restaurant?.name}
                                         rating={recommendation?.restaurant?.rating}

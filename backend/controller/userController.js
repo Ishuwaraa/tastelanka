@@ -114,19 +114,28 @@ const getUserData = async (req, res) => {
     try{
         if(!mongoose.Types.ObjectId.isValid(userId)) return res.status(400).json({ msg: "Invalid ID" });
 
-        const user = await User.findById(userId).select('-password');
-        // const user = await User.findById(userId).select('-password').populate([
-        //     { path: 'restaurant', select: 'name thumbnail rating'},
-        //     { path: 'favourites', select: 'name thumbnail rating'}
-        // ]);
+        // const user = await User.findById(userId).select('-password');
+        const user = await User.findById(userId).select('-password').populate([
+            // { path: 'restaurant', select: 'name thumbnail rating'},
+            { path: 'favourites', select: 'name thumbnail rating location'}
+        ]);
         if(!user) return res.status(404).json({ msg: 'No user found' });
 
         //need to generate s3 url for thumbnails
+        if (user?.favourites?.length > 0) {
+            await Promise.all(
+                user.favourites.map(async (restaurant) => {
+                    if (restaurant.thumbnail !== null) {
+                        restaurant.thumbnail = await getImageUrl(restaurant.thumbnail, 3600);
+                    }
+                })
+            );
+        }
 
         user.profilePic = await getImageUrl(user.profilePic, 3600);
         res.status(200).json({ 
             name: user.name, phone: user.phone, 
-            email: user.email, profilePic: user.profilePic 
+            email: user.email, profilePic: user.profilePic, favs: user.favourites
         });
     } catch (err) {
         res.status(500).json({ msg: err.message });
@@ -198,8 +207,45 @@ const getUserRestaurant = async (req, res) => {
 }
 
 //add to user favs
+const addToFavs = async (req, res) => {
+    const userId = req.userid;
+    const { restaurantId } = req.body;
 
-//get user favs
+    try {
+        if(!mongoose.Types.ObjectId.isValid(userId)) return res.status(400).json({ msg: "Invalid ID" });
+        if(!mongoose.Types.ObjectId.isValid(restaurantId)) return res.status(400).json({ msg: "Invalid ID" });
+
+        //using set to avoid duplicates
+        const user = await User.findByIdAndUpdate(userId, {
+            $addToSet: { favourites: restaurantId }
+        }, { new: true });
+        if (!user) return res.status(500).json({ msg: 'Error adding to favourites' });
+
+        res.status(200).json({ msg: "Added to favourites successfully" });
+    } catch (err) {
+        res.status(500).json({ msg: err.message });
+    }
+}
+
+//remove from favs
+const removeFromFavs = async (req, res) => {
+    const userId = req.userid;
+    const { restaurantId } = req.body;
+
+    try {
+        if(!mongoose.Types.ObjectId.isValid(userId)) return res.status(400).json({ msg: "Invalid ID" });
+        if(!mongoose.Types.ObjectId.isValid(restaurantId)) return res.status(400).json({ msg: "Invalid ID" });
+        
+        const user = await User.findByIdAndUpdate(userId, {
+            $pull: { favourites: restaurantId }
+        }, { new: true });
+        if (!user) return res.status(500).json({ msg: 'Error removing favourites' });
+
+        res.status(200).json({ msg: "Removed from favourites successfully" });
+    } catch (err) {
+        res.status(500).json({ msg: err.message });
+    }
+}
 
 //update profile pic
 const updateProfilePic = async (req, res) => {
@@ -371,5 +417,5 @@ const resetPass = async (req, res) => {
     }
 }
 
-module.exports = { cookieOptions, register, login, checkAuth, logout, getUserData, getUserRestaurant, 
+module.exports = { cookieOptions, register, login, checkAuth, logout, getUserData, getUserRestaurant, addToFavs, removeFromFavs,
     updateUserData, updatePass, updateProfilePic, deleteAcc, forgotPass, resetPass };

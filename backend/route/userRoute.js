@@ -16,5 +16,7 @@ router.patch('/pass', verifyJwt, users.updatePass);
 router.post('/del', verifyJwt, users.deleteAcc);
 router.post('/forgot-pass', users.forgotPass);
 router.post('/reset-pass/:token', users.resetPass);
+router.post('/add-fav', verifyJwt, users.addToFavs);
+router.post('/remove-fav', verifyJwt, users.removeFromFavs);
 
 module.exports = router;

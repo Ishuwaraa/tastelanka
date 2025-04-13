@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import RestaurantCard from "../components/RestaurantCard";
+import TrendingRestaurantCard from "../components/TrendingRestaurantCard";
 
 const Profile = () => {
     const [activeForm, setActiveForm] = useState('profile');
@@ -12,7 +13,8 @@ const Profile = () => {
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');    
+    const [phone, setPhone] = useState('');
+    const [favRestaurants, setFavRestaurants] = useState([]);
 
     const [newName, setNewName] = useState('');
     const [newEmail, setNewEmail] = useState('');
@@ -29,11 +31,13 @@ const Profile = () => {
 
     const fetchUserData = async () => {
         try {
-            const { data } = await axiosInstance.get('user/');            
+            const { data } = await axiosInstance.get('user/');    
+            console.log(data);        
             setName(data?.name);
             setEmail(data?.email);
             setPhone(data?.phone);
             setProfilePic(data?.profilePic);
+            setFavRestaurants(data?.favs);
         } catch (err) {
             console.log(err.message);
         }
@@ -199,7 +203,27 @@ const Profile = () => {
             <div className="mt-16">
                 <p className="text-2xl font-semibold">Your favourites</p>
 
-                <div className="w-full flex flex-col items-center mt-10">
+                <div className="flex justify-center mt-10">
+                    {favRestaurants.length > 0 ? (
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                            {favRestaurants.map((restaurant, index) => (
+                                <a href={`/restaurant?id=${restaurant._id}&f=true`} key={index}>
+                                    <TrendingRestaurantCard
+                                        restaurant={restaurant?.name}
+                                        thumbnail={restaurant?.thumbnail}
+                                        location={restaurant?.location}
+                                        reviews={Math.floor(Math.random() * 10) + 1}
+                                        rating={restaurant?.rating}
+                                    />
+                                </a>
+                            ))}
+                        </div>
+                    ) : (
+                        <p>Add your favourite restaurant here for easy access</p>
+                    )}
+                </div>
+
+                {/* <div className="w-full flex flex-col items-center mt-10">
                     {Array(3).fill(0).map((restaurant, index) => (
                         <a href='/' key={index} className="md:w-3/4">
                             <RestaurantCard
@@ -211,7 +235,7 @@ const Profile = () => {
                             />
                         </a>
                     ))}
-                </div>
+                </div> */}
             </div>
         </div>
         </>

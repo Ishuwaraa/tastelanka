@@ -76,7 +76,7 @@ const Category = () => {
 
                 <div className="mt-10">
                     {searchResults.length > 0 ? searchResults.map((result, index) => (
-                        <a href={`/restaurant?id=${result?.restaurant?._id}`} key={index}>
+                        <a href={`/restaurant?id=${result?.restaurant?._id}&f=false`} key={index}>
                             <RestaurantCard
                                 restaurant={result?.restaurant?.name}
                                 rating={result?.restaurant?.rating}
