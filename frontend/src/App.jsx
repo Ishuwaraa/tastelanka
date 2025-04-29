@@ -8,7 +8,7 @@ import Inbox from './pages/Inbox';
 import MyRestaurant from './pages/MyRestaurant';
 import Login from './pages/Login';
 import { useAuthStore } from './store/useAuthStore';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import SignUp from './pages/Signup';
 import { Toaster } from "react-hot-toast";
 import Category from './pages/Category';
@@ -16,6 +16,7 @@ import AddRestaurant from './pages/AddRestaurant';
 import NearbyRestaurants from './pages/NearbyRestaurants';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import LoadingPan from './assets/loading_pan.gif';
 
 function App() {
   const { authUser, isCheckingAuth, checkAuth } = useAuthStore();  
@@ -25,8 +26,35 @@ function App() {
   }, [checkAuth])
 
   if (isCheckingAuth && !authUser) {
-    return (<div>loading...</div>)
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <img src={LoadingPan} alt="Loading..." className="w-36 mb-4" />
+        <p className="text-lg text-gray-600 font-bold">Loading...</p>
+      </div>
+    );
   }
+
+  // const [showLoader, setShowLoader] = useState(true);
+
+  // useEffect(() => {
+  //   checkAuth();
+
+  //   // Force 5-second loading screen
+  //   const timer = setTimeout(() => {
+  //     setShowLoader(false);
+  //   }, 50000);
+
+  //   return () => clearTimeout(timer);
+  // }, [checkAuth]);
+
+  // if ((isCheckingAuth || showLoader) && !authUser) {
+  //   return (
+  //     <div className="flex flex-col items-center justify-center h-screen">
+  //       <img src={LoadingPan} alt="Loading..." className="w-36 mb-4" />
+  //       <p className="text-lg text-gray-600 font-bold">Loading...</p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <BrowserRouter>

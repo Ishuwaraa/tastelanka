@@ -44,7 +44,7 @@ const RecommendationInput = ({ onSearch }) => {
             <textarea
                 rows="4"
                 className="block p-4 w-full resize-none text-gray-900 bg-gray-100 rounded-3xl"
-                placeholder="I want to taste spicy kottu near Colombo"
+                placeholder="Find me a place with good lamprais and chill ambiance in Colombo"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
             ></textarea>

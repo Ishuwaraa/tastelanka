@@ -30,7 +30,7 @@ const SignUp = () => {
         <div className="min-h-screen flex items-center justify-center bg-red-50 bg-opacity-75 backdrop-blur-sm">
             <div className="bg-white rounded-xl shadow-xl overflow-hidden w-full max-w-4xl flex">
                 
-                <div className="bg-red-600 text-white p-10 flex flex-col justify-center w-2/5">
+                <div className="bg-primary text-white p-10 flex flex-col justify-center w-2/5">
                     <h1 className="text-3xl font-bold mb-4 hover:cursor-pointer" onClick={() => window.location.href = '/'}>TateLanka</h1>
                     <p className="text-lg">Discover, Review and Connect with Sri Lankan Restaurants.</p>
                 </div>
@@ -38,7 +38,7 @@ const SignUp = () => {
                 
                 <div className="p-10 w-3/5">
                     <div className="mb-8">
-                        <h2 className="text-2xl font-bold text-gray-800">Create Account</h2>
+                        <h2 className="text-2xl font-bold text-gray-800">Create your account</h2>
                         <p className="text-gray-600">Join our community of food lovers</p>
                     </div>
                     
@@ -67,7 +67,7 @@ const SignUp = () => {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                                placeholder="john@email.com"
+                                placeholder="johndoe@gmail.com"
                                 required
                             />
                         </div>

@@ -26,7 +26,7 @@ const Login = () => {
         <div className="min-h-screen flex items-center justify-center bg-red-50 bg-opacity-75 backdrop-blur-sm">
             <div className="bg-white rounded-xl shadow-xl overflow-hidden w-full max-w-4xl flex">
                 
-                <div className="bg-red-600 text-white p-10 flex flex-col justify-center w-2/5">
+                <div className="bg-primary text-white p-10 flex flex-col justify-center w-2/5">
                     <h1 className="text-3xl font-bold mb-4 hover:cursor-pointer" onClick={() => window.location.href = '/'}>TateLanka</h1>
                     <p className="text-lg">Discover, Review and Connect with Sri Lankan Restaurants.</p>
                 </div>

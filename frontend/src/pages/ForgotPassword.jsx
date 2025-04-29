@@ -45,7 +45,7 @@ const ForgotPassword = () => {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                                placeholder="john@gmail.com"
+                                placeholder="johndoe@gmail.com"
                                 required
                             />
                         </div>
@@ -59,7 +59,7 @@ const ForgotPassword = () => {
                         
                     {/* </form> */}
                     <div className="text-center mt-4">
-                        <a href="#" className="text-red-600 hover:text-red-800 text-sm">
+                        <a href="/login" className="text-red-600 hover:text-red-800 text-sm">
                             Back to Login
                         </a>
                     </div>
