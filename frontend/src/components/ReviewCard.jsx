@@ -5,12 +5,65 @@ import DummyPic from "../assets/dummy.jpg";
 import Rating from './shared/Rating';
 import PreviewImagesModal from './PreviewImagesModal';
 import { useState } from 'react';
+import { axiosInstance } from '../lib/axios';
 
-const ReviewCard = ({ restaurantName, username, profilePic, date, rating, review, images, helpful, likes, dislikes, ownerReply}) => {
+const ReviewCard = ({ restaurantId, reviewId, restaurantName, username, profilePic, date, rating, review, images, helpful, likes, dislikes, ownerReply}) => {
     const [openReviewPhotos, setOpenReviewPhotos] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [reviewStats, setReviewStats] = useState({
+        helpfulCount: helpful || 0,
+        likesCount: likes || 0,
+        dislikesCount: dislikes || 0
+    });
 
     const handleOpenReviewPics = () => setOpenReviewPhotos(true);
-    const handleCloseReviewPics = () => setOpenReviewPhotos(false);     
+    const handleCloseReviewPics = () => setOpenReviewPhotos(false);
+
+    const updateReviewRating = async (type) => {
+        if (isUpdating) return;
+        setIsUpdating(true);
+        
+        try {            
+            const updateData = {};
+            
+            switch(type) {
+                case 'helpful':
+                    updateData.helpful = reviewStats.helpfulCount + 1;
+                    updateData.likes = reviewStats.likesCount;
+                    updateData.dislikes = reviewStats.dislikesCount;
+                    break;
+                case 'like':
+                    updateData.likes = reviewStats.likesCount + 1;
+                    updateData.helpful = reviewStats.helpfulCount;
+                    updateData.dislikes = reviewStats.dislikesCount;
+                    break;
+                case 'dislike':
+                    updateData.dislikes = reviewStats.dislikesCount + 1;
+                    updateData.helpful = reviewStats.helpfulCount;
+                    updateData.likes = reviewStats.likesCount;
+                    break;
+                default:
+                    break;
+            }
+                        
+            const { data } = await axiosInstance.patch(`/review/${restaurantId}/rating/${reviewId}`, updateData);
+            console.log(data);
+            
+            const updatedReview = data.reviews?.find(rev => rev._id === reviewId);
+            
+            if (updatedReview) {
+                setReviewStats({
+                    helpfulCount: updatedReview?.helpful || 0,
+                    likesCount: updatedReview?.likes || 0,
+                    dislikesCount: updatedReview?.dislikes || 0
+                });                                
+            }
+        } catch (err) {
+            console.log(err.message);
+        } finally {
+            setIsUpdating(false);
+        }
+    };
 
     return (         
         <div className="border-b pb-6">
@@ -45,17 +98,29 @@ const ReviewCard = ({ restaurantName, username, profilePic, date, rating, review
 
             {/* Review Actions */}
             <div className="flex gap-6 mt-4">
-                <button className="flex flex-col items-center gap-2 text-gray-500 rounded-full">
+                <button 
+                    className="flex flex-col items-center gap-2 text-gray-500 rounded-full"
+                    onClick={() => updateReviewRating('helpful')}
+                    disabled={isUpdating}
+                >
                     <img src={HelpFul} alt="helpful" className="rounded-full border border-gray-700 p-2 w-8"/>
-                    Helpful {helpful}
+                    Helpful {reviewStats.helpfulCount}
                 </button>
-                <button className="flex flex-col items-center gap-2 text-gray-500">
+                <button 
+                    className="flex flex-col items-center gap-2 text-gray-500"
+                    onClick={() => updateReviewRating('like')}
+                    disabled={isUpdating}
+                >
                     <img src={Heart} alt="heart"  className="rounded-full border border-gray-700 p-2 w-8"/>
-                    Like this {likes}
+                    Like this {reviewStats.likesCount}
                 </button>
-                <button className="flex flex-col items-center gap-2 text-gray-500">
+                <button 
+                    className="flex flex-col items-center gap-2 text-gray-500"
+                    onClick={() => updateReviewRating('dislike')}
+                    disabled={isUpdating}
+                >
                     <img src={ThumbsDown} alt="thumbs down"  className="rounded-full border border-gray-700 p-2 w-8"/>
-                    Dislike {dislikes}
+                    Dislike {reviewStats.dislikesCount}
                 </button>
             </div>            
 

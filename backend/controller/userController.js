@@ -132,10 +132,12 @@ const getUserData = async (req, res) => {
             );
         }
 
-        user.profilePic = await getImageUrl(user.profilePic, 3600);
+        if (user?.profilePic) {
+            user.profilePic = await getImageUrl(user.profilePic, 3600);
+        }
         res.status(200).json({ 
             name: user.name, phone: user.phone, 
-            email: user.email, profilePic: user.profilePic, favs: user.favourites
+            email: user.email, profilePic: user?.profilePic, favs: user.favourites
         });
     } catch (err) {
         res.status(500).json({ msg: err.message });

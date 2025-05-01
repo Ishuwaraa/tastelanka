@@ -12,6 +12,7 @@ import PromotionsCard from '../components/PromotionsCard';
 import { axiosInstance } from '../lib/axios';
 import OwnerReviewCard from '../components/OwnerReviewCard';
 import PromotionModal from '../components/PromotionModal';
+import { APIProvider, Map, AdvancedMarker } from '@vis.gl/react-google-maps';
 
 const MyRestaurant = () => {    
     const [openAllPhotos, setOpenAllPhotos] = useState(false);
@@ -30,6 +31,10 @@ const MyRestaurant = () => {
     const [reviews, setReviews] = useState([]);
     const [allPhotos, setAllPhotos] = useState([]);
 
+    const [lat, setLat] = useState(null);
+    const [long, setLong] = useState(null);
+    const position = (lat === null || long === null) ? {lat: 6.884504262718018, lng: 79.91861383804526} : {lat: lat, lng: long};
+
     const fetchRestaurantData = async () => {
         try {
             const { data } = await axiosInstance.get('user/restaurant')
@@ -37,6 +42,8 @@ const MyRestaurant = () => {
             console.log(data?.reviewDoc?.reviews);
             setRestaurantDetails(data?.restaurant);
             setReviews(data?.reviewDoc?.reviews);
+            setLat(data?.restaurant?.latitude);
+            setLong(data?.restaurant?.longitude);
 
             const menuImages = data?.restaurant?.menu || [];
             const restaurantImages = data?.restaurant?.images || [];
@@ -149,7 +156,7 @@ const MyRestaurant = () => {
                     <div className="md:col-span-2 overflow-y-auto">
 
                         {/* Promotions Section */}
-                        {restaurantDetails?.promotions?.length > 0 &&
+                        {restaurantDetails?.promotions?.length > 0 ? (
                             <div>
                                 <div className="flex gap-5 mb-3">
                                     <h2 className="text-xl font-semibold mb-4">Your Current Promotions</h2>
@@ -158,7 +165,7 @@ const MyRestaurant = () => {
                                 <PromotionModal open={openPromotionModal} handleClose={handleClosePromotion} restaurantId={restaurantDetails?._id}/>
                                 
                                 {/* Promotion Cards */}
-                                <div className="space-y-4 md:w-3/4 h-80 overflow-y-scroll">                                
+                                <div className="space-y-4 md:w-3/4 max-h-80 overflow-y-auto">                                
                                     {restaurantDetails?.promotions?.map((promotion) => (
                                         <PromotionsCard 
                                             restaurantId={restaurantDetails?._id}
@@ -175,7 +182,17 @@ const MyRestaurant = () => {
                                     <button className="border border-primary text-primary px-2 py-1 rounded-md" onClick={handleOpenPromotion}>Add a new Promotion</button>                                                              
                                 </div> 
                             </div>
-                        }
+                        ) : (
+                            <div className=' border rounded-lg py-5'>
+                                <div className='flex justify-center mb-5'>
+                                    <p>You don't have any promotions yet</p>
+                                </div>
+                                <div className='flex justify-center'>
+                                    <button className="border border-primary text-primary px-2 py-1 rounded-md" onClick={handleOpenPromotion}>Add a new Promotion</button>
+                                </div>
+                                <PromotionModal open={openPromotionModal} handleClose={handleClosePromotion} restaurantId={restaurantDetails?._id}/>
+                            </div>  
+                        )}
 
                         {/* Reviews */}
                         <div className="space-y-8 mt-20 w-3/4">
@@ -232,8 +249,12 @@ const MyRestaurant = () => {
                         {/* Location div */}
                         <div className="mt-10 border rounded-lg p-6">
                             <h2 className="text-xl font-semibold mb-4">Location</h2>
-                            <div className="w-full overflow-hidden">
-                                <img src={MapImg} alt="location" />
+                            <div className="w-full h-96 overflow-hidden">
+                            <APIProvider apiKey={import.meta.env.VITE_MAP_KEY}>
+                                <Map defaultCenter={position} defaultZoom={12} mapId={import.meta.env.VITE_MAP_ID} center={position}>
+                                    <AdvancedMarker position={position} />
+                                </Map>
+                            </APIProvider>
                             </div>
                         </div>
                     </div>

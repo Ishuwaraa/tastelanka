@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import ChatContainer from "../components/ChatContainer";
 import DummyPic from "../assets/dummy.jpg";
+import NoChatSelected from "../assets/nochat.png";
 
 const Inbox = () => {
     const { getUsers, users, setSelectedUser, selectedUser } = useChatStore();
@@ -33,7 +34,7 @@ const Inbox = () => {
                                 </div>
                             </div>
                         )) : (
-                            <div className="flex items-center p-4 border-b border-gray-200 bg-gray-50 hover: cursor-pointer">
+                            <div className="flex items-center p-4 border-b border-gray-200 bg-gray-50">
                                 <img src={DummyPic} alt="User" className="w-10 h-10 rounded-full mr-3" />
                                 <div>
                                     <p>No users</p>
@@ -48,7 +49,10 @@ const Inbox = () => {
                     {selectedUser ? (
                         <ChatContainer/>
                     ) : (
-                        <p>No chat selected</p>
+                        <div className="flex flex-col items-center justify-center h-full">
+                            <img src={NoChatSelected} alt="no chat selected" className="w-52 mb-4"/>
+                            <p className="text-gray-500 text-center">Select a chat to start a conversation!</p>
+                        </div>
                     )}
                 </div>
             </div>

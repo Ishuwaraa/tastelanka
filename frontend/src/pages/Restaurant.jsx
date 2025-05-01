@@ -205,7 +205,7 @@ const Restaurant = () => {
                                 <h2 className="text-xl font-semibold mb-4">Available Promotions</h2>
                                 
                                 {/* Promotion Cards */}                            
-                                <div className="space-y-4 md:w-3/4 h-80 overflow-y-scroll">
+                                <div className="space-y-4 md:w-3/4 max-h-80 overflow-y-auto">
                                     {restaurantDetails?.promotions?.map((promotion) => (
                                         <PromotionsCard 
                                             editable={false}
@@ -227,6 +227,8 @@ const Restaurant = () => {
 
                                 return (
                                     <ReviewCard
+                                        restaurantId={restaurantDetails?._id}
+                                        reviewId={review?._id}
                                         restaurantName={restaurantDetails?.name}
                                         username={review?.user?.name}
                                         profilePic={review?.user?.profilePic}

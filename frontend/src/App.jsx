@@ -39,7 +39,6 @@ function App() {
   // useEffect(() => {
   //   checkAuth();
 
-  //   // Force 5-second loading screen
   //   const timer = setTimeout(() => {
   //     setShowLoader(false);
   //   }, 50000);
