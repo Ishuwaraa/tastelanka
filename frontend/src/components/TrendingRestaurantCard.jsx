@@ -2,7 +2,7 @@ import Rating from './shared/Rating'
 
 const TrendingRestaurantCard = ({ restaurant, location, reviews, rating, thumbnail }) => {
     return ( 
-        <div className=" card"> 
+        <div className=" card h-96"> 
             <img src={thumbnail} alt={restaurant} className=" w-full h-48 object-cover" />
             <div className="m-4">
                 <span className=" text-lg font-medium line-clamp-2 mb-1">{restaurant}</span>
