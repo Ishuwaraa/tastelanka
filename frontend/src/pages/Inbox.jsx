@@ -9,6 +9,14 @@ import NoChatSelected from "../assets/nochat.png";
 const Inbox = () => {
     const { getUsers, users, setSelectedUser, selectedUser } = useChatStore();
     const { onlineUsers, authUser } = useAuthStore();
+
+    const selectedUserOnClick = (user) => {
+        if (user?.role === 'owner') {
+            setSelectedUser({id: user._id, name: user?.restaurant?.name, profilePic: user?.profilePic})
+        } else {
+            setSelectedUser({id: user._id, name: user?.name, profilePic: user?.profilePic})
+        }
+    }
     
     useEffect(() => {
         getUsers();
@@ -27,10 +35,14 @@ const Inbox = () => {
                     {/* Chat List */}
                     <div>
                         {(users && users?.length > 0) ? users.map((user, index) => (
-                            <div className="flex items-center p-4 border-b border-gray-200 bg-gray-50 hover: cursor-pointer" key={index} onClick={() => setSelectedUser({id: user._id, name: user?.name, profilePic: user?.profilePic})}>
+                            <div className="flex items-center p-4 border-b border-gray-200 bg-gray-50 hover: cursor-pointer" key={index} onClick={() => selectedUserOnClick(user)}>
                                 <img src={user?.profilePic ? user?.profilePic : DummyPic} alt="User" className="w-10 h-10 rounded-full mr-3" />
                                 <div>
-                                    <p>{user?.name}</p>
+                                    {(user?.role === 'owner') ? (
+                                        <p>{user?.restaurant?.name}</p>
+                                    ) : (
+                                        <p>{user?.name}</p>
+                                    )}
                                 </div>
                             </div>
                         )) : (

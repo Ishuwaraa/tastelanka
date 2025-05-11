@@ -17,7 +17,12 @@ const getUsersForSideBar = async (req, res) => {
             if (chat.receiver.toString() !== currUserId) userIds.add(chat.receiver.toString());
         });
 
-        const users = await User.find({ _id: { $in: Array.from(userIds) } }).select("-password");
+        const users = await User.find({ _id: { $in: Array.from(userIds) } })
+            .select("-password")
+            .populate({
+                path: 'restaurant',
+                select: 'name',
+            });
         res.status(200).json(users);
     } catch (err) {
         res.status(500).json({ msg: err.message });

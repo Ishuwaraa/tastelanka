@@ -38,7 +38,7 @@ const ChatContainer = () => {
         {/* Messages Container */}
         <div className="flex-1 p-4 overflow-y-auto max-h-screen">
             {messages.map((message, index) => {
-                return (message?.sender?._id === authUser?.id) ? (
+                return (message?.sender?._id === authUser?.id || message?.sender === authUser?.id) ? (
                     <div className="flex justify-end mb-4" key={index}>
                         <div className="flex gap-5 items-center">
                             <div className="bg-blue-100 p-3 rounded-lg">

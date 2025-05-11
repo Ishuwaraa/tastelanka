@@ -58,7 +58,7 @@ export const useChatStore = create((set, get) => ({
                     color: 'white'
                 },
             });
-            if (newMessage.text.sender !== selectedUser.id) return;   //worked fine w/o this line until added the toaster 
+            //if (newMessage.text.sender !== selectedUser.id) return;   //worked fine w/o this line until added the toaster 
             console.log('came here')
             set({ messages: [...get().messages, newMessage.text]})
             //console.log('curr messages: ', [...get().messages, newMessage.text])

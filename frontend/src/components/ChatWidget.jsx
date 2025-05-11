@@ -61,7 +61,7 @@ const ChatWidget = ({ restaurantName, ownerId, profilePic }) => {
                 {/* Messages Container */}
                 <div className="h-64 overflow-y-auto p-3 bg-gray-50">
                     {messages.map((message, index) => {
-                        return (message?.sender?._id === authUser?.id) ? (
+                        return (message?.sender?._id === authUser?.id || message?.sender === authUser?.id) ? (
                             <div className="mb-4" key={index}>
                                 <div className="flex items-start">
                                     <img src={message?.sender?.profilePic ? message?.sender?.profilePic : DummyPic} alt="User" className="w-8 h-8 rounded-full mr-2" />
@@ -89,37 +89,6 @@ const ChatWidget = ({ restaurantName, ownerId, profilePic }) => {
                             </div>
                         )
                     })}
-                    {/* Restaurant Message */}
-                    {/* <div className="mb-4">
-                        <div className="flex items-start">
-                            <img src={ProfilePic} alt="Restaurant" className="w-8 h-8 rounded-full mr-2" />
-                            <div>
-                                <div className="flex items-center">
-                                    <span className="font-medium mr-2">King of the Mambo</span>
-                                    <span className="text-xs text-gray-500">7:24 PM</span>
-                                </div>
-                                <p className="text-sm mt-1">
-                                    Hi Missaka, thanks for reaching out! Happy to connect with you.
-                                </p>
-                            </div>
-                        </div>
-                    </div> */}
-
-                    {/* User Message */}
-                    {/* <div className="mb-4">
-                        <div className="flex items-start">
-                            <img src={ProfilePic} alt="User" className="w-8 h-8 rounded-full mr-2" />
-                            <div>
-                                <div className="flex items-center">
-                                    <span className="font-medium mr-2">Missaka Rathnapriya</span>
-                                    <span className="text-xs text-gray-500">8:24 PM</span>
-                                </div>
-                                <p className="text-sm mt-1">
-                                    Can you send your Menu plz?
-                                </p>
-                            </div>
-                        </div>
-                    </div> */}
                 </div>
 
                 {/* Message Input */}
