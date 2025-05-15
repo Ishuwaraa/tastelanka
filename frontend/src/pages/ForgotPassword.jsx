@@ -25,7 +25,7 @@ const ForgotPassword = () => {
     }
 
     return (         
-        <div className="min-h-screen flex items-center justify-center bg-red-50 bg-opacity-75 backdrop-blur-sm">
+        <div className="min-h-screen flex items-center justify-center bg-opacity-75 backdrop-blur-sm">
             <div className="bg-white rounded-xl shadow-xl overflow-hidden w-full max-w-md p-8">
                 {!submitted ? (
                 <>

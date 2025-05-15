@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import LoginBg from "../assets/login_bg.png";
 
 const SignUp = () => {
     const [name, setName] = useState('');
@@ -27,12 +28,23 @@ const SignUp = () => {
     }
 
     return (                               
-        <div className="min-h-screen flex items-center justify-center bg-red-50 bg-opacity-75 backdrop-blur-sm">
+        <div className="min-h-screen flex items-center justify-center bg-opacity-75 backdrop-blur-sm">
             <div className="bg-white rounded-xl shadow-xl overflow-hidden w-full max-w-4xl flex">
                 
-                <div className="bg-primary text-white p-10 flex flex-col justify-center w-2/5">
-                    <h1 className="text-3xl font-bold mb-4 hover:cursor-pointer" onClick={() => window.location.href = '/'}>TateLanka</h1>
-                    <p className="text-lg">Discover, Review and Connect with Sri Lankan Restaurants.</p>
+                <div className="relative bg-primary text-white p-10 flex flex-col justify-center w-2/5 overflow-hidden">                    
+                    <div 
+                        className="absolute inset-0 opacity-25 z-0"
+                        style={{
+                            backgroundImage: `url(${LoginBg})`,
+                            backgroundSize: "cover",
+                            backgroundRepeat: "repeat"
+                        }}
+                    ></div>
+                                        
+                    <div className="relative z-10">
+                        <h1 className="text-3xl font-bold mb-4 hover:cursor-pointer drop-shadow-md text-shadow" onClick={() => window.location.href = '/'}>TateLanka</h1>
+                        <p className="text-lg drop-shadow-md">Discover, Review and Connect with Sri Lankan Restaurants.</p>
+                    </div>
                 </div>
                 
                 
