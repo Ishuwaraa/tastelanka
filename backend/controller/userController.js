@@ -199,6 +199,10 @@ const getUserRestaurant = async (req, res) => {
         const reviewsArray = reviewDoc? reviewDoc.reviews : [];
         await Promise.all(reviewsArray.map(async (review) => {
             review.images = await getArrayOfImageUrls(review.images, 3600);
+
+            if (review.user?.profilePic !== null) {
+                review.user.profilePic = await getImageUrl(review.user.profilePic, 3600)
+            }
         }))
 
 

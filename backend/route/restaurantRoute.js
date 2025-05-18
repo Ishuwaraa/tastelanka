@@ -8,6 +8,7 @@ router.get('/recommend', restaurants.getRestaurantRecommendations);
 router.get('/nearby', restaurants.getNearbyRestaurantsGeoSpatial);
 router.get('/search', restaurants.searchRestaurants);
 router.get('/search/category', restaurants.getRestaurantsByCategory);
+router.patch('/edit/:id', verifyJwt, restaurants.updateRestaurant);
 router.get('/', restaurants.getAllRestaurants);
 router.get('/:id', restaurants.getRestaurantById);
 router.post('/', verifyJwt, upload, restaurants.createRestaurant);

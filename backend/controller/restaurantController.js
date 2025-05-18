@@ -224,15 +224,15 @@ const createRestaurant = async (req, res) => {
         const imageFilenames = req.files.restaurantPhotos ? req.files.restaurantPhotos.map(file => file.key) : [];
 
         //TODO: UNCOMMENT THIS
-        // if (role !== 'customer') {
-        //     const allImages = [
-        //         ...(thumbnailFilename ? [thumbnailFilename] : []), 
-        //         ...menuFilenames,
-        //         ...imageFilenames
-        //     ];
-        //     await deleteImages(allImages);            
-        //     return res.status(401).json({ msg: 'You can only add upto 1 restaurant' });
-        // }
+        if (role !== 'customer') {
+            const allImages = [
+                ...(thumbnailFilename ? [thumbnailFilename] : []), 
+                ...menuFilenames,
+                ...imageFilenames
+            ];
+            await deleteImages(allImages);            
+            return res.status(401).json({ msg: 'You can only add upto 1 restaurant' });
+        }
 
         const description = generateDescription(data);
 
@@ -261,7 +261,7 @@ const createRestaurant = async (req, res) => {
 
         const user = await User.findByIdAndUpdate(userId, {
             restaurant: restaurant._id,
-            role: 'customer'
+            role: 'owner'
         }, { new: true })
         if (!user) return res.status(500).json({ msg: 'Restaurant created. Error updating user' });  
         
@@ -361,6 +361,30 @@ const deletePromotion = async (req, res) => {
 //update restaurant w new images
 
 //update restaurant
+const updateRestaurant = async (req, res) => {
+    const { id } = req.params;
+    const userId = req.userid;
+    const role = req.role;
+    const data = req.body;
+
+    try {
+        if (role !== 'owner') return res.status(401).json({ msg: 'Not allowed' });
+
+        const restaurant = await Restaurant.findByIdAndUpdate(id, {
+            name: data.name,
+            location: data.location,
+            contact: data.contact,
+            webUrl: data.webUrl,
+            latitude: data.lat,
+            longitude: data.long,
+            category: data.category
+        }, { new: true })
+
+        res.status(200).json(restaurant);
+    } catch (err) {
+        res.status(500).json({ msg: err.messag });
+    }
+}
 
 //delete restaurant
 const deleteRestaurant = async (req, res) => {
@@ -407,4 +431,4 @@ const deleteRestaurant = async (req, res) => {
 }
 
 module.exports = { getAllRestaurants, getRestaurantById, searchRestaurants, getRestaurantsByCategory, 
-    getRestaurantRecommendations, getNearbyRestaurantsGeoSpatial, createRestaurant, addPromotion, editPromotion, deletePromotion, deleteRestaurant };
+    getRestaurantRecommendations, getNearbyRestaurantsGeoSpatial, createRestaurant, addPromotion, editPromotion, deletePromotion, updateRestaurant, deleteRestaurant };
