@@ -13,7 +13,7 @@ const TrendingRestaurantCard = ({ restaurant, location, reviews, rating, thumbna
                     <Rating rating={rating} />                   
                     {/* <img src={HalfRating} alt='1star' /> */}
                 </div>
-                <div className=" text-sm font-medium">{reviews} reviews</div>
+                <div className=" text-sm font-medium">{rating === 0 ? 0 : reviews} reviews</div>
             </div>            
         </div> 
      );
