@@ -11,8 +11,7 @@ const RestaurantCard = ({ restaurant, reviewsCount, rating, categories, review, 
                 <p className='font-medium text-lg line-clamp-1 mb-2'>{restaurant}</p>
                 <div className='flex justify-between mb-2'>
                     <div className=" flex items-center gap-1">
-                        <Rating rating={rating} />                 
-                        {/* <img src={HalfRating} alt='1star' /> */}
+                        <Rating rating={rating} />
                     </div>
                     <div className=" text-sm font-medium">{reviewsCount ? `${reviewsCount} reviews` : ""}</div>
                 </div>

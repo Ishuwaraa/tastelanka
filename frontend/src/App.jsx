@@ -17,6 +17,7 @@ import NearbyRestaurants from './pages/NearbyRestaurants';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import LoadingPan from './assets/loading_pan.gif';
+import NearbyRestaurants2 from './pages/Test2';
 
 function App() {
   const { authUser, isCheckingAuth, checkAuth } = useAuthStore();  
@@ -64,11 +65,13 @@ function App() {
         <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/forgot-pass' element={<ForgotPassword />} />
         <Route path='/search' element={<Search />} />
+        <Route path='/nearby' element={<NearbyRestaurants2 />} />
+        <Route path='/test' element={<NearbyRestaurants />} />
         <Route path='/category' element={<Category />} />
         <Route path='/recommendation' element={<Recommendations />} />
         <Route path='/restaurant' element={<Restaurant />} />
-        <Route path='/nearby' element={<NearbyRestaurants />} />
-        <Route path='/add-restaurant' element={authUser?.role !== 'owner' ? <AddRestaurant /> : <Navigate to='/' />} />
+        <Route path='/add-restaurant' element={<AddRestaurant />} />
+        {/* <Route path='/add-restaurant' element={authUser?.role !== 'owner' ? <AddRestaurant /> : <Navigate to='/' />} /> */}
         <Route path='/profile'>
           <Route index element={authUser? <Profile /> : <Navigate to='/login' />} />
           <Route path='inbox' element={authUser? <Inbox /> : <Navigate to='/login' />} />

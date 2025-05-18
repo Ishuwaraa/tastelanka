@@ -9,20 +9,25 @@ import HeroImage1 from '../assets/hero1.png';
 import RecommendationInput from "../components/RecommendationInput";
 import { useEffect, useState } from "react";
 import { axiosInstance } from "../lib/axios";
+import TrendingRestaurantCardSkeleton from "../components/shared/TrendingRestaurantCardSkeleton";
 
 
 const categories = ['Sri Lankan Authentic', 'Vegetarian', 'HALAL Certified', 'Fast Food', 'Chinese', 'Indian']
 
 const Home = () => {
     const [topRestaurants, setTopRestaurants] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const fetchTopRestaurats = async () => {
         try {
+            setLoading(true);
             const { data } = await axiosInstance.get('/restaurant');
             const sortedRestaurants = data?.restaurants.sort((a, b) => b.rating - a.rating);
             setTopRestaurants(sortedRestaurants);
         } catch (err) {
             console.log(err.message);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -61,22 +66,34 @@ const Home = () => {
                     </div>
                     <div>
                         <div className="flex justify-center">
-                            {topRestaurants.length > 0 ? (
+                            {loading ? (
                                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-                                    {topRestaurants.slice(0, 3).map((restaurant, index) => (
-                                        <a href={`/restaurant?id=${restaurant._id}&f=false`} key={index}>
-                                            <TrendingRestaurantCard
-                                                restaurant={restaurant?.name}
-                                                thumbnail={restaurant?.thumbnail}
-                                                location={restaurant?.location}
-                                                reviews={Math.floor(Math.random() * 10) + 1}
-                                                rating={restaurant?.rating}
-                                            />
-                                        </a>
+                                    {Array(3).fill(0).map((_, index) => (
+                                        <TrendingRestaurantCardSkeleton key={index} />
                                     ))}
                                 </div>
                             ) : (
-                                <p>Sorry we couldn't find any restaurants...</p>                                
+                                topRestaurants.length > 0 ? (
+                                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                                        {topRestaurants.slice(0, 3).map((restaurant, index) => (
+                                            <a href={`/restaurant?id=${restaurant._id}&f=false`} key={index}>
+                                                {loading ? (
+                                                    <TrendingRestaurantCardSkeleton />
+                                                ) : (
+                                                    <TrendingRestaurantCard
+                                                        restaurant={restaurant?.name}
+                                                        thumbnail={restaurant?.thumbnail}
+                                                        location={restaurant?.location}
+                                                        reviews={Math.floor(Math.random() * 10) + 1}
+                                                        rating={restaurant?.rating}
+                                                    />
+                                                )}
+                                            </a>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p>Sorry we couldn't find any restaurants...</p>                                
+                                )
                             )}
                         </div>
                     </div>
