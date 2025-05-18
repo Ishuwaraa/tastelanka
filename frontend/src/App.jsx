@@ -18,6 +18,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import LoadingPan from './assets/loading_pan.gif';
 import NearbyRestaurants2 from './pages/Test2';
+import EditRestaurant from './pages/EditRestaurant';
 
 function App() {
   const { authUser, isCheckingAuth, checkAuth } = useAuthStore();  
@@ -70,12 +71,13 @@ function App() {
         <Route path='/category' element={<Category />} />
         <Route path='/recommendation' element={<Recommendations />} />
         <Route path='/restaurant' element={<Restaurant />} />
-        <Route path='/add-restaurant' element={<AddRestaurant />} />
-        {/* <Route path='/add-restaurant' element={authUser?.role !== 'owner' ? <AddRestaurant /> : <Navigate to='/' />} /> */}
+        {/* <Route path='/add-restaurant' element={<AddRestaurant />} /> */}
+        <Route path='/add-restaurant' element={authUser?.role !== 'owner' ? <AddRestaurant /> : <Navigate to='/' />} />
         <Route path='/profile'>
           <Route index element={authUser? <Profile /> : <Navigate to='/login' />} />
           <Route path='inbox' element={authUser? <Inbox /> : <Navigate to='/login' />} />
           <Route path='restaurant' element={authUser? <MyRestaurant /> : <Navigate to='/login' />} />
+          <Route path='edit-restaurant' element={authUser?.role === 'owner' ? <EditRestaurant /> : <Navigate to='/' />} />
         </Route>
       </Routes>
 
