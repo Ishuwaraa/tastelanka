@@ -2,7 +2,7 @@ const Review = require('../model/ReviewModel');
 const Restaurant = require('../model/RestaurantModel');
 const User = require('../model/UserModel');
 const mongoose = require('mongoose');
-const { getArrayOfImageUrls } = require('../middleware/awsMiddleware');
+const { getArrayOfImageUrls, getImageUrl } = require('../middleware/awsMiddleware');
 
 //get all reviews
 const getReviews = async (req, res) => {
@@ -18,6 +18,10 @@ const getReviews = async (req, res) => {
         //directly modifies reviewDoc.reviews cuz reviewsArray is not a copy but a reference
         await Promise.all(reviewsArray.map(async (review) => {
             review.images = await getArrayOfImageUrls(review.images, 3600);
+            
+            if (review.user?.profilePic !== null) {
+                review.user.profilePic = await getImageUrl(review.user.profilePic, 3600)
+            }
         }))
 
         res.status(200).json(reviewDoc);
