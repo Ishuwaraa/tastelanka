@@ -68,7 +68,7 @@ const ChatWidget = ({ restaurantName, ownerId, profilePic }) => {
                                     <div>
                                         <div className="flex items-center">
                                             <span className="font-medium mr-2">You</span>
-                                            <span className="text-xs text-gray-500">8:24 PM</span>
+                                            {/* <span className="text-xs text-gray-500">8:24 PM</span> */}
                                         </div>
                                         <p className="text-sm mt-1">{message?.text}</p>
                                     </div>
@@ -81,7 +81,7 @@ const ChatWidget = ({ restaurantName, ownerId, profilePic }) => {
                                     <div>
                                         <div className="flex items-center">
                                             <span className="font-medium mr-2">{restaurantName}</span>
-                                            <span className="text-xs text-gray-500">7:24 PM</span>
+                                            {/* <span className="text-xs text-gray-500">7:24 PM</span> */}
                                         </div>
                                         <p className="text-sm mt-1">{message?.text}</p>
                                     </div>

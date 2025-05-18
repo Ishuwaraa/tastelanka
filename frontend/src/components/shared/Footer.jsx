@@ -29,7 +29,7 @@ const Footer = () => {
                     </div>
                     
                     <div className="col-span-1 md:col-span-2 pr-10">
-                        <h2 className="text-2xl font-bold mb-4">About Us</h2>
+                        <h2 className="text-2xl font-semibold mb-4">About Us</h2>
                         <p className="text-sm">
                             TasteLanka is your go-to platform for discovering and sharing the rich culinary experiences of Sri Lanka. Whether
                             you're craving authentic rice and curry, halal street food, or a cozy vegetarian cafe, we help you find the best local
@@ -40,7 +40,7 @@ const Footer = () => {
                     </div>
                     
                     <div className="col-span-1">
-                        <h2 className="text-2xl font-bold mb-4">Contact Us</h2>
+                        <h2 className="text-2xl font-semibold mb-4">Contact Us</h2>
                         <p className="mb-4 text-sm">
                             Have any questions for us? Just give us a shout!
                         </p>

@@ -99,7 +99,11 @@ const MyRestaurant = () => {
                         
                         {/* Category and Hours */}
                         <div className="flex flex-col gap-1">
-                            <p className="text-sm">Bakeries, Cafes, Coffee & Tea</p>
+                            <p className="text-sm">
+                                {restaurantDetails?.category?.length > 0 && restaurantDetails.category.map((category, index) => (
+                                    <span key={index}>{category} &nbsp;&nbsp;</span>
+                                ))}
+                            </p>
                             <p className="text-sm">                                
                                 {todayHours ? (
                                     <>
@@ -125,7 +129,7 @@ const MyRestaurant = () => {
 
                 {/* Action Buttons */}
                 <div className="flex gap-4 p-4 border-b">
-                    <button className="bg-primary text-white px-6 py-2 rounded-md">Edit Restaurant</button>
+                    <button className="bg-primary text-white px-6 py-2 rounded-md" onClick={() => window.location.href = '/profile/edit-restaurant'}>Edit Restaurant</button>
 
                     <button className="border px-6 py-2 rounded-md flex items-center gap-2"  onClick={handleOpenMenu}>
                         View Menu

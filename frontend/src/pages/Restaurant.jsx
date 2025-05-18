@@ -139,7 +139,11 @@ const Restaurant = () => {
                         
                         {/* Category and Hours */}
                         <div className="flex flex-col gap-1">
-                            <p className="text-sm">Bakeries, Cafes, Coffee & Tea</p>
+                            <p className="text-sm">
+                                {restaurantDetails?.category?.length > 0 && restaurantDetails.category.map((category, index) => (
+                                    <span key={index}>{category} &nbsp;&nbsp;</span>
+                                ))}
+                            </p>
                             <p className="text-sm">                                
                                 {todayHours ? (
                                     <>

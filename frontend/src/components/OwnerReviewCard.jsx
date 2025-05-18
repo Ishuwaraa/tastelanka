@@ -76,15 +76,15 @@ const OwnerReviewCard = ({ restaurantName, restaurantId, reviewId, username, pro
 
             {/* Review Actions */}
             <div className="flex gap-6 mt-4">
-                <button className="flex flex-col items-center gap-2 text-gray-500 rounded-full">
+                <button className="flex flex-col items-center gap-2 text-gray-500 rounded-full" disabled>
                     <img src={HelpFul} alt="helpful" className="rounded-full border border-gray-700 p-2 w-8"/>
                     Helpful {helpful}
                 </button>
-                <button className="flex flex-col items-center gap-2 text-gray-500">
+                <button className="flex flex-col items-center gap-2 text-gray-500" disabled>
                     <img src={Heart} alt="heart"  className="rounded-full border border-gray-700 p-2 w-8"/>
                     Like this {likes}
                 </button>
-                <button className="flex flex-col items-center gap-2 text-gray-500">
+                <button className="flex flex-col items-center gap-2 text-gray-500" disabled>
                     <img src={ThumbsDown} alt="thumbs down"  className="rounded-full border border-gray-700 p-2 w-8"/>
                     Dislike {dislikes}
                 </button>
@@ -114,8 +114,8 @@ const OwnerReviewCard = ({ restaurantName, restaurantId, reviewId, username, pro
             {ownerReplyText && (
                 <div className="mt-4 p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-3 mb-2">
-                        <span className="font-semibold ">{restaurantName}</span>
-                        <span className="text-sm text-gray-500">Replied</span>
+                        <span className="font-semibold ">Your reply</span>
+                        {/* <span className="text-sm text-gray-500">Replied</span> */}
                     </div>
                     <p className="text-gray-700">{ownerReplyText}</p>
                 </div>
