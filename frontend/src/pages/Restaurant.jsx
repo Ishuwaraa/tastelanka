@@ -155,7 +155,7 @@ const Restaurant = () => {
 
                 {/* Action Buttons */}
                 <div className="flex gap-4 p-4 border-b">
-                    <button className="bg-primary text-white px-6 py-2 rounded-md" onClick={handleOpenMenu}>View Menu</button>
+                    <button className="bg-primary text-white px-6 py-2 rounded-md" onClick={handleOpenMenu} disabled={!restaurantDetails?.menu?.length}>View Menu</button>
                     {(restaurantDetails && restaurantDetails?.menu?.length > 0) && (
                         <PreviewImagesModal
                             open={openMenu}
@@ -164,7 +164,7 @@ const Restaurant = () => {
                         />
                     )}
 
-                    <button className="border px-6 py-2 rounded-md flex items-center gap-2" onClick={handleOpenAllPics}>
+                    <button className="border px-6 py-2 rounded-md flex items-center gap-2" onClick={handleOpenAllPics} disabled={!allPhotos.length}>
                         View all photos
                     </button>
                     {allPhotos.length > 0 && (

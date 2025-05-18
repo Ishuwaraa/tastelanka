@@ -6,6 +6,9 @@ import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import RestaurantCard from "../components/RestaurantCard";
 import TrendingRestaurantCard from "../components/TrendingRestaurantCard";
+import TrendingRestaurantCardSkeleton from "../components/shared/TrendingRestaurantCardSkeleton";
+import Footer from "../components/shared/Footer";
+import ProfileFormSkeleton from "../components/shared/ProfileFormSkeleton";
 
 const Profile = () => {
     const [activeForm, setActiveForm] = useState('profile');
@@ -15,6 +18,8 @@ const Profile = () => {
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [favRestaurants, setFavRestaurants] = useState([]);
+    const [profileLoading, setProfileLoading] = useState(false);
+    const [favRestaurantLoading, setFavRestaurantLoading] = useState(false);
 
     const [newName, setNewName] = useState('');
     const [newEmail, setNewEmail] = useState('');
@@ -31,8 +36,10 @@ const Profile = () => {
 
     const fetchUserData = async () => {
         try {
+            setProfileLoading(true);
+            setFavRestaurantLoading(true);
             const { data } = await axiosInstance.get('user/');    
-            console.log(data);        
+            // console.log(data);        
             setName(data?.name);
             setEmail(data?.email);
             setPhone(data?.phone);
@@ -40,6 +47,9 @@ const Profile = () => {
             setFavRestaurants(data?.favs);
         } catch (err) {
             console.log(err.message);
+        } finally {
+            setProfileLoading(false);
+            setFavRestaurantLoading(false);
         }
     };
 
@@ -138,16 +148,20 @@ const Profile = () => {
         
                 <div className=" col-span-2 border border-cusGray rounded-lg">
                     <div className=" px-10 py-8">
-                        {activeForm === 'profile' && 
-                            <form action="" >
-                                <p className=" mb-1 w-full font-semibold">Name</p>
-                                <input type="text" className="input" readOnly value={name}/>
-                                <p className=" mt-3 mb-1 w-full font-semibold">Email</p>
-                                <input type="email" className="input" readOnly value={email}/>
-                                <p className=" mt-3 mb-1 w-full font-semibold">Contact</p>
-                                <input type="text" className="input" readOnly value={phone ? phone : ''}/>                                    
-                            </form>
-                        }
+                        {profileLoading ? (
+                            <ProfileFormSkeleton />
+                        ) : (
+                            activeForm === 'profile' && 
+                                <form action="" >
+                                    <p className=" mb-1 w-full font-semibold">Name</p>
+                                    <input type="text" className="input" readOnly value={name}/>
+                                    <p className=" mt-3 mb-1 w-full font-semibold">Email</p>
+                                    <input type="email" className="input" readOnly value={email}/>
+                                    <p className=" mt-3 mb-1 w-full font-semibold">Contact</p>
+                                    <input type="text" className="input" readOnly value={phone ? phone : ''}/>                                    
+                                </form>
+                            
+                        )}
 
                         {activeForm === 'edit' &&
                             <form action="" onSubmit={(e) => onSubmit(e, 'edit')}>
@@ -204,22 +218,30 @@ const Profile = () => {
                 <p className="text-2xl font-semibold">Your favourites</p>
 
                 <div className="flex justify-center mt-10">
-                    {favRestaurants.length > 0 ? (
+                    {favRestaurantLoading ? (
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-                            {favRestaurants.map((restaurant, index) => (
-                                <a href={`/restaurant?id=${restaurant._id}&f=true`} key={index}>
-                                    <TrendingRestaurantCard
-                                        restaurant={restaurant?.name}
-                                        thumbnail={restaurant?.thumbnail}
-                                        location={restaurant?.location}
-                                        reviews={Math.floor(Math.random() * 10) + 1}
-                                        rating={restaurant?.rating}
-                                    />
-                                </a>
+                            {Array(3).fill(0).map((_, index) => (
+                                <TrendingRestaurantCardSkeleton key={index} />
                             ))}
                         </div>
                     ) : (
-                        <p>Add your favourite restaurant here for easy access</p>
+                        favRestaurants.length > 0 ? (
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                                {favRestaurants.map((restaurant, index) => (
+                                    <a href={`/restaurant?id=${restaurant._id}&f=true`} key={index}>
+                                        <TrendingRestaurantCard
+                                            restaurant={restaurant?.name}
+                                            thumbnail={restaurant?.thumbnail}
+                                            location={restaurant?.location}
+                                            reviews={Math.floor(Math.random() * 10) + 1}
+                                            rating={restaurant?.rating}
+                                        />
+                                    </a>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-gray-500">Add your favourite restaurants here for easy access</p>
+                        )
                     )}
                 </div>
 
@@ -238,6 +260,8 @@ const Profile = () => {
                 </div> */}
             </div>
         </div>
+
+        <Footer />
         </>
      );
 }
