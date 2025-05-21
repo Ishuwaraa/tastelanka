@@ -20,7 +20,7 @@ const Inbox = () => {
     
     useEffect(() => {
         getUsers();
-    }, [])  //add [users] here as a dependancy to get the latest users before the viva
+    }, [])  //add [users] here as a dependancy to get the latest users 
 
     return ( 
         <>

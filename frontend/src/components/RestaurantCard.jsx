@@ -17,7 +17,7 @@ const RestaurantCard = ({ restaurant, reviewsCount, rating, categories, review, 
                 </div>
                 <div className='flex gap-2 mb-4'>
                     {categories.map((category, index) => (
-                        <div className=' rounded-lg py-1 px-2 bg-zinc-200' key={index}>{category}</div>
+                        <div className='text-sm rounded-lg py-1 px-2 bg-zinc-200' key={index}>{category}</div>
                     ))}
                 </div>
                 <div>
