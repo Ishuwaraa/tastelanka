@@ -22,17 +22,21 @@ Prerequisites:
  * Rename .env.example to .env and fill in the required values
 
 ### 1. Start the Backend 
- 
+
+```
 cd backend  
 npm install  
-npm start  
+npm start
+```
 
 
 ### 2. Start the Frontend
 
+```
 cd ../frontend  
 npm install  
-npm run dev  
+npm run dev
+```
 
 Then visit http://localhost:3000  
 
@@ -43,13 +47,17 @@ Prerequisites:
  * Python 3.8+  
  * Virtual environment (recommended)  
 
+```
 cd ../model  
 python -m venv venv  
 source venv/Scripts/activate  
-pip install -r requirements.txt  
+pip install -r requirements.txt
+```
 
 Run the Flask server:  
-python app.py  
+```
+python app.py
+```
 
 * The model will be available at http://localhost:5000/recommend  
 * You can test it by sending a POST request with JSON like:  
@@ -61,8 +69,10 @@ python app.py
 
 ## 📌 Notes
 
-* Before starting the Flask API, ensure embeddings.npy and restaurants.json exist. if not run:  
-python create_embeddings.npy  
+* Before starting the Flask API, ensure embeddings.npy and restaurants.json exist. if not run:
+```
+python create_embeddings.npy
+```
 
 * Make sure all servers are running concurrently for full functionality
 
